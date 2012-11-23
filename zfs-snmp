@@ -26,10 +26,10 @@ def zfs_arc_hits(oid):
 def zfs_arc_misses(oid):
     return ('counter', kstat("zfs:0:arcstats:misses") % 2**32) # 32 bit counter
 
-def zfs_arc_cache_c(oid):
+def zfs_arc_c(oid):
     return ('counter', kstat("zfs:0:arcstats:c") / 1024) # KB
 
-def zfs_arc_cache_p(oid):
+def zfs_arc_p(oid):
     return ('counter', kstat("zfs:0:arcstats:p") / 1024) # KB  
 
 def zfs_read(oid):
@@ -81,8 +81,8 @@ result = [
     ( BASE_OID + '.2.3.0', zfs_arc_data),
     ( BASE_OID + '.2.4.0', zfs_arc_hits),
     ( BASE_OID + '.2.5.0', zfs_arc_misses),
-    ( BASE_OID + '.2.6.0', zfs_arc_cache_c),
-    ( BASE_OID + '.2.7.0', zfs_arc_cache_p),
+    ( BASE_OID + '.2.6.0', zfs_arc_c),
+    ( BASE_OID + '.2.7.0', zfs_arc_p),
 
     ( BASE_OID + '.3.1.0', zfs_l2arc_hits),
     ( BASE_OID + '.3.2.0', zfs_l2arc_misses),
