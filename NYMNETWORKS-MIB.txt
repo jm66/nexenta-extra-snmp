@@ -107,6 +107,21 @@ zfsARCMisses OBJECT-TYPE
 	         "The number of ARC accesses that were cache misses."
 	::= {arc 5}
 
+zfsARCTargetSize OBJECT-TYPE
+        SYNTAX  GAUGE
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                 "The amount of ARC Target size"
+        ::= {arc 6}
+
+zfsARCMru OBJECT-TYPE
+        SYNTAX  GAUGE
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+                 "The amount of ARC size most recently used."
+        ::= {arc 7}
 l2arc	OBJECT IDENTIFIER ::= {zfs 3}
 
 zfsL2ARCHits OBJECT-TYPE
