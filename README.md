@@ -49,22 +49,26 @@ basic UPS stats:
     NYMNETWORKS-MIB::upsBatteryType.1 = STRING: "PbAc"
     NYMNETWORKS-MIB::upsStatus.1 = STRING: "OL"
 
-To use, drop the scripts
+To use, drop the scripts for example `/usr/local/bin`
 
     snmpresponse.py
     zfs-snmp
     ipmi-snmp
     nut-snmp
 
-in for example `/usr/local/bin`, add the following to
-`/etc/net-snmp/snmp/snmpd.conf`:
+Add the following to `/etc/sma/snmp/snmpd.conf`
 
+    # ZFS - Solaris extra OIDs
     pass .1.3.6.1.4.1.25359.1 /usr/local/bin/zfs-snmp
     pass .1.3.6.1.4.1.25359.2 /usr/local/bin/ipmi-snmp # Optional, for IPMI
     pass .1.3.6.1.4.1.25359.3 /usr/local/bin/nut-snmp # Optional, for NUT/UPS
 
-and `svcadm restart net-snmp`. If you don't already use the net-snmp service
-you will need to set community etc at the top of the file and `svcadm enable net-snmp`.
+Restart snmp agent via sma
+
+    svcadm disable svc:/application/management/sma:default
+    svcadm disable svc:/application/management/snmpdx:default
+    svcadm enable svc:/application/management/sma:default
+    svcadm enable svc:/application/management/snmpdx:default
 
 License
 -------
