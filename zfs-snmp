@@ -27,10 +27,10 @@ def zfs_arc_misses(oid):
     return ('counter', kstat("zfs:0:arcstats:misses") % 2**32) # 32 bit counter
 
 def zfs_arc_c(oid):
-    return ('counter', kstat("zfs:0:arcstats:c") / 1024) # KB
+    return ('gauge', kstat("zfs:0:arcstats:c") / 1024) # KB
 
 def zfs_arc_p(oid):
-    return ('counter', kstat("zfs:0:arcstats:p") / 1024) # KB  
+    return ('gauge', kstat("zfs:0:arcstats:p") / 1024) # KB  
 
 def zfs_read(oid):
     return ('counter', kstat("unix:0:vopstats_zfs:read_bytes") / 1024 % 2**32) # 32 bit KB counter
