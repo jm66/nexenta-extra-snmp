@@ -1,9 +1,9 @@
 #!/usr/sbin/dtrace -s
 #pragma D option quiet
 
-/* Description: This script measures the percentage of NFS thread pool currently utilized
- * (maximum being NFSD_SERVERS), along with Max pending (queued) NFS requests that have not
- * yet been assigned a thread. It is useful in troubleshooting bottlenecks in the Solaris
+/* Description: This script measures the percentage of NFS thread pool currently utilized 
+ * (maximum being NFSD_SERVERS), along with Max pending (queued) NFS requests that have not 
+ * yet been assigned a thread. It is useful in troubleshooting bottlenecks in the Solaris  
  * NFS server, and determining the correct NFSD_SERVERS value for high-load systems. */
 /* Author: Kirill.Davydychev@Nexenta.com */
 /* Copyright 2013, Nexenta Systems, Inc. All rights reserved. */
@@ -17,10 +17,10 @@ svc_xprt_qput:entry
 }
 
 tick-5sec
-{
-        printa(" max_nfs_req:%@d max_active_threads:%@d thread_pool_util:%@d\n", @pending_reqs, @act_threads, @pool_pct_util);
-        trunc(@pending_reqs);
-        trunc(@act_threads);
+{        
+        printa("%@d %@d %@d", @pending_reqs, @act_threads, @pool_pct_util);
+        trunc(@pending_reqs); 
+        trunc(@act_threads); 
         trunc(@pool_pct_util);
         exit(0);
 }
