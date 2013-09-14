@@ -60,13 +60,16 @@ def zfs_pools():
     return pools
 
 def zfs_used_avail(fs):
-    return [ int(x) / 1024 for x in commands.getoutput("zfs get -Hpo value used,available " + fs).split("\n")]
+    return [ long(x) / 1024 for x in commands.getoutput("zfs get -Hpo value used,available " + fs).split("\n")]
 
 def zfs_used(fs, divisor=1):
     return ('gauge', zfs_used_avail(fs)[0] / divisor)
 
 def zfs_avail(fs, divisor=1):
     return ('gauge', zfs_used_avail(fs)[1] / divisor)
+
+def zfs_size(fs, divisor=1):
+    return ('gauge', ( zfs_used_avail(fs)[0] + zfs_used_avail(fs)[1] ) / divisor) 
 
 # nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
 # zfs             OBJECT IDENTIFIER ::= {nymnetworks 1}
@@ -100,8 +103,10 @@ for pool, health in zfs_pools():
     result.append((BASE_OID + '.1.2.' + str(i), lambda oid, fs=pool: zfs_avail(fs)))
     result.append((BASE_OID + '.1.3.' + str(i), lambda oid, fs=pool: zfs_used(fs)))
     result.append((BASE_OID + '.1.4.' + str(i), ('integer', health)))
+    result.append((BASE_OID + '.1.5.' + str(i), lambda oid, fs=pool: zfs_size(fs)))
     result.append((BASE_OID + '.1.12.' + str(i), lambda oid, fs=pool: zfs_avail(fs, 1024)))
     result.append((BASE_OID + '.1.13.' + str(i), lambda oid, fs=pool: zfs_used(fs, 1024)))
+    result.append((BASE_OID + '.1.14.' + str(i), lambda oid, fs=pool: zfs_size(fs, 1024)))
     i += 1
 
 operation = sys.argv[1]
