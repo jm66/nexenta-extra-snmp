@@ -1,5 +1,5 @@
 <interface>
-    <name>Get ZFS Server Statistics</name>
+    <name>Get ZFS Volume Statistics</name>
         <oid_index>.1.3.6.1.4.1.25359.1.5.1</oid_index>
         <index_order>zfsVolName</index_order>
         <index_order_type>alphabetic</index_order_type>
