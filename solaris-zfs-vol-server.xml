@@ -1,0 +1,59 @@
+<interface>
+    <name>Get ZFS Server Statistics</name>
+        <oid_index>.1.3.6.1.4.1.25359.1.5.1</oid_index>
+        <index_order>zfsVolName</index_order>
+        <index_order_type>alphabetic</index_order_type>
+        <index_title_format>|chosen_order_field|</index_title_format>
+    <fields>
+        <zfsVolName>
+            <name>ZFS Volume Name</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>input</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.1</oid>
+        </zfsVolName>
+        <zfsVolAvailableKB>
+            <name>Available KB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.2</oid>
+        </zfsVolAvailableKB>
+        <zfsVolUsedKB>
+            <name>Used KB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.3</oid>
+        </zfsVolUsedKB>
+        <zfsVolSizeKB>
+            <name>Size KB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.4</oid>
+        </zfsVolSizeKB>
+        <zfsVolAvailableMB>
+            <name>Available MB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.12</oid>
+        </zfsVolAvailableMB>
+        <zfsVolUsedMB>
+            <name>Used MB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.13</oid>
+        </zfsVolUsedMB>
+        <zfsVolSizeMB>
+            <name>Size MB</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.25359.1.5.14</oid>
+        </zfsVolSizeMB>
+    </fields>
+</interface>
+
