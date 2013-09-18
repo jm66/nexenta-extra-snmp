@@ -60,7 +60,7 @@ def zfs_pools():
     return pools
 
 def zfs_used_avail(fs):
-    return [ long(x) / 1024 for x in commands.getoutput("zfs get -Hpo value used,available " + fs).split("\n")]
+    return [ int(x) / 1024 for x in commands.getoutput("zfs get -Hpo value used,available " + fs).split("\n")]
 
 def zfs_used(fs, divisor=1):
     return ('gauge', zfs_used_avail(fs)[0] / divisor)
@@ -76,6 +76,11 @@ def zfs_vols():
     vols = [ ( row[0] ) for row in vols ]
     return vols
 
+def zfs_fss():
+   fss = [ re.split('\s+', line) for line in commands.getoutput("zfs list -H -t filesystem").split("\n")]
+   fss = [ ( row[0] ) for row in fss ]
+   return fss 
+
 # nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
 # zfs             OBJECT IDENTIFIER ::= {nymnetworks 1}
 # fs              OBJECT IDENTIFIER ::= {zfs 1}
@@ -83,6 +88,7 @@ def zfs_vols():
 # l2arc           OBJECT IDENTIFIER ::= {zfs 3}
 # io              OBJECT IDENTIFIER ::= {zfs 4}
 # vols		  OBJECT IDENTIFIER ::= {zfs 5}
+# fss		  OBJECT IDENTIFIER ::= {zfs 6}
 
 result = [
     ( BASE_OID + '.2.1.0', zfs_arc_size),
@@ -115,7 +121,9 @@ for pool, health in zfs_pools():
     result.append((BASE_OID + '.1.14.' + str(i), lambda oid, fs=pool: zfs_size(fs, 1024)))
     i += 1
 
+i = 1
 for vol in zfs_vols():
+    if len(vol) < 1: break
     result.append((BASE_OID + '.5.1.' + str(i), ('string', vol)))
     result.append((BASE_OID + '.5.2.' + str(i), lambda oid, fs=vol: zfs_avail(fs)))
     result.append((BASE_OID + '.5.3.' + str(i), lambda oid, fs=vol: zfs_used(fs)))
@@ -123,6 +131,17 @@ for vol in zfs_vols():
     result.append((BASE_OID + '.5.12.' + str(i), lambda oid, fs=vol: zfs_avail(fs, 1024)))
     result.append((BASE_OID + '.5.13.' + str(i), lambda oid, fs=vol: zfs_used(fs, 1024)))
     result.append((BASE_OID + '.5.14.' + str(i), lambda oid, fs=vol: zfs_size(fs, 1024)))
+    i += 1
+
+i = 1
+for fss in zfs_fss():
+    result.append((BASE_OID + '.6.1.' + str(i), ('string', fss)))
+    result.append((BASE_OID + '.6.2.' + str(i), lambda oid, fs=fss: zfs_avail(fs)))
+    result.append((BASE_OID + '.6.3.' + str(i), lambda oid, fs=fss: zfs_used(fs)))
+    result.append((BASE_OID + '.6.4.' + str(i), lambda oid, fs=fss: zfs_size(fs)))
+    result.append((BASE_OID + '.6.12.' + str(i), lambda oid, fs=fss: zfs_avail(fs, 1024)))
+    result.append((BASE_OID + '.6.13.' + str(i), lambda oid, fs=fss: zfs_used(fs, 1024)))
+    result.append((BASE_OID + '.6.14.' + str(i), lambda oid, fs=fss: zfs_size(fs, 1024)))
     i += 1
 
 operation = sys.argv[1]
