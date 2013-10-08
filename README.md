@@ -81,12 +81,13 @@ To use, drop the scripts
     ipmi-snmp
     nut-snmp
 
-in for example `/usr/local/bin`, add the following to `/etc/sma/snmp/snmpd.conf`:
+in for example `/opt/solaris-extra-snmp`, add the following to `/etc/sma/snmp/snmpd.conf`:
 
     # ZFS - Solaris extra OIDs
-    pass .1.3.6.1.4.1.25359.1 /usr/local/bin/zfs-snmp
-    pass .1.3.6.1.4.1.25359.2 /usr/local/bin/ipmi-snmp # Optional, for IPMI
-    pass .1.3.6.1.4.1.25359.3 /usr/local/bin/nut-snmp # Optional, for NUT/UPS
+    pass .1.3.6.1.4.1.25359.1 /opt/solaris-extra-snmp/zfs-snmp
+    pass .1.3.6.1.4.1.25359.2 /opt/solaris-extra-snmp/ipmi-snmp # Optional, for IPMI
+    pass .1.3.6.1.4.1.25359.3 /opt/solaris-extra-snmp/nut-snmp # Optional, for NUT/UPS
+    pass .1.3.6.1.4.1.25359.5 /opt/solaris-extra-snmp/net-snmp # Optional, for IPNet Stats
 
 Restart snmp agent via sma
     

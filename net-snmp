@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-BASE_OID = '.1.3.6.1.4.1.25359.3'
+BASE_OID = '.1.3.6.1.4.1.25359.5'
 
 import sys, commands, re, snmpresponse
 
@@ -12,7 +12,7 @@ def netsnmp():
         return 0
 
 def ipnet_stats_af(oid):
-    return ('counter', int(netsnmp()[1]))
+    return ('gauge', int(netsnmp()[1]))
 
 result = [
     ( BASE_OID + '.2.1.0', ipnet_stats_af),
