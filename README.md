@@ -55,40 +55,31 @@ With this information, you can graph ZFS ARC size and hit rate, ZFS IO rate and
 ZFS L2ARC hit rate and IO rate. Have a look in the MIB or in the source for
 more detailed descriptions of the individual variables. 
 
-If you add the `ipmi-snmp` script, you'll get a basic temperature reading:
-
-    NYMNETWORKS-MIB::tempSensorName.0 = STRING: "System Temp"
-    NYMNETWORKS-MIB::tempSensorValue.0 = Gauge32: 20
-
-If you have a NUT installation and add the `nut-snmp` script, youll get some
-basic UPS stats:
-
-    NYMNETWORKS-MIB::upsId.1 = STRING: "smartups"
-    NYMNETWORKS-MIB::upsModel.1 = STRING: "Smart-UPS 750"
-    NYMNETWORKS-MIB::upsManufacturer.1 = STRING: "American Power Conversion"
-    NYMNETWORKS-MIB::upsSerial.1 = STRING: "AS1141221798"
-    NYMNETWORKS-MIB::upsBatteryChargePercent.1 = Gauge32: 100
-    NYMNETWORKS-MIB::upsBatteryRuntimeSec.1 = Gauge32: 2340
-    NYMNETWORKS-MIB::upsBatteryVoltagedV.1 = Gauge32: 275
-    NYMNETWORKS-MIB::upsBatteryNominalVoltagedV.1 = Gauge32: 240
-    NYMNETWORKS-MIB::upsBatteryType.1 = STRING: "PbAc"
-    NYMNETWORKS-MIB::upsStatus.1 = STRING: "OL"
-
 To use, drop the scripts
 
     snmpresponse.py
     zfs-snmp
-    ipmi-snmp
-    nut-snmp
+    net-snmp
 
 in for example `/opt/solaris-extra-snmp`, add the following to `/etc/sma/snmp/snmpd.conf`:
 
     # ZFS - Solaris extra OIDs
     pass .1.3.6.1.4.1.25359.1 /opt/solaris-extra-snmp/zfs-snmp
-    pass .1.3.6.1.4.1.25359.2 /opt/solaris-extra-snmp/ipmi-snmp # Optional, for IPMI
-    pass .1.3.6.1.4.1.25359.3 /opt/solaris-extra-snmp/nut-snmp # Optional, for NUT/UPS
     pass .1.3.6.1.4.1.25359.5 /opt/solaris-extra-snmp/net-snmp # Optional, for IPNet Stats
 
+add the sript that generates cache files in crontab:
+    # running ZPool Stats script every monute
+    # will generate cache files in /tmp
+    * * * * * /opt/solaris-extra-snmp/zfs.py
+
+Previous script will generate four cache files:
+    -rw-r--r-- 1 root root 35K Apr 25 11:21 /tmp/zfss_full.snmp.cache
+    -rw-r--r-- 1 root root 335 Apr 25 11:21 /tmp/zpools_health.snmp.cache
+    -rw-r--r-- 1 root root 141 Apr 25 11:21 /tmp/zvols_full.snmp.cache
+    -rw-r--r-- 1 root root 38K Apr 25 11:21 /tmp/zfs_stats.snmp.cache
+
+Those cache files will be read by the zfs-snmp script in order to improve performance
+ 
 Restart snmp agent via sma
     
     svcadm disable svc:/application/management/sma:default
@@ -104,5 +95,4 @@ License
 -------
 
 2-Clause BSD
-
 
