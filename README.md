@@ -66,13 +66,20 @@ in for example `/opt/solaris-extra-snmp`, add the following to `/etc/sma/snmp/sn
     # ZFS - Solaris extra OIDs
     pass .1.3.6.1.4.1.25359.1 /opt/solaris-extra-snmp/zfs-snmp
     pass .1.3.6.1.4.1.25359.5 /opt/solaris-extra-snmp/net-snmp # Optional, for IPNet Stats
+    pass .1.3.6.1.4.1.25359.9 /opt/solaris-extra-snmp/zpio-snmp
 
-add the sript that generates cache files in crontab:
+add cache sripts that generates cache files in crontab:
+
     # running ZPool Stats script every monute
     # will generate cache files in /tmp
     * * * * * /opt/solaris-extra-snmp/zfs.py
+    
+    # running ZPool IOStat script every minute
+    # will generate cache files in /tmp
+    * * * * * /opt/solaris-extra-snmp/zpio.py
 
 Previous script will generate four cache files:
+
     -rw-r--r-- 1 root root 35K Apr 25 11:21 /tmp/zfss_full.snmp.cache
     -rw-r--r-- 1 root root 335 Apr 25 11:21 /tmp/zpools_health.snmp.cache
     -rw-r--r-- 1 root root 141 Apr 25 11:21 /tmp/zvols_full.snmp.cache
