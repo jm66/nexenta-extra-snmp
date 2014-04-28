@@ -55,7 +55,7 @@ def zpoolio_simple(pool):
   output = commands.getoutput("zpool iostat %s 1 2 |tail -1" % pool)
   e = re.split("\s+", output)
   zpio[pool] = {'zpool': e[0], 'calloc': toMB(norm(e[1])), 'cfree':  toMB(norm(e[2])), 'oread': toN(normN(e[3])),
-          'owrite': toN(normN(e[4])), 'bread': toKB(norm(e[5])), 'bwrite': toKB(norm(e[6])), 'lread':  e[7], 'lwrite': e[8]}
+          'owrite': toN(normN(e[4])), 'bread': toN(normN(e[5])), 'bwrite': toN(normN(norm(e[6])), 'lread':  e[7], 'lwrite': e[8]}
   return zpio
 
 zpools = zfs_pools()

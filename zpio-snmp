@@ -12,16 +12,16 @@ def zpio_cfree(pool):
  return ('gauge', zpios[pool][pool]['cfree']) # MB 
 
 def zpio_oread(pool):
- return ('gauge', zpios[pool][pool]['oread']) # operations
+ return ('gauge', zpios[pool][pool]['oread']) # I/O operations
 
 def zpio_owrite(pool):
- return ('gauge', zpios[pool][pool]['owrite']) # operations
+ return ('gauge', zpios[pool][pool]['owrite']) # I/O operations
 
 def zpio_bread(pool):
- return ('gauge', zpios[pool][pool]['bread']) # KB
+ return ('gauge', zpios[pool][pool]['bread']) # units/sec
 
 def zpio_bwrite(pool):
- return ('gauge', zpios[pool][pool]['bwrite']) # KB
+ return ('gauge', zpios[pool][pool]['bwrite']) # units/sec
 
 def zpio_lread(pool):
  return ('gauge', zpios[pool][pool]['lread']) # msecs
