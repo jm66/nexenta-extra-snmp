@@ -30,14 +30,14 @@ def normN(n):
  elif "M" in n: return (float(n.replace('M','')), 'M')
  elif "G" in n: return (float(n.replace('G','')), 'G')
  elif "T" in n: return (float(n.replace('T','')), 'T')
- else: return n
+ else: return (n, 'N')
 
 def toN(n):
   if "K" in n[1]: return (int(round(n[0] * 10**3)))
   elif "M" in n[1]: return (int(round(n[0] * 10**6)))
   elif "G" in n[1]: return (int(round(n[0] * 10**9)))
   elif "T" in n[1]: return (int(round(n[0] * 10**12)))
-  else: return n
+  else: return n[0]
 
 def zfs_pools():
     pools = [ re.split('\s+', line) for line in commands.getoutput("zpool list -H -o name,health").split("\n") ]
