@@ -1,14 +1,13 @@
 #!/usr/bin/python
-# IOStat
 
 import sys, commands, re
 import simplejson as json
 
+# iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
+
 def iostat():
     # r/s    w/s   kr/s   kw/s wait actv wsvc_t asvc_t  %w  %b device
     iostat = {}
-    # iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
-
     command = 'iostat -xntpz | egrep -v "tty|tout|extended|device"'
     output = commands.getoutput(command).split("\n")
     for line in output:
@@ -18,7 +17,7 @@ def iostat():
       'wait': line_attr[5], 'actv': line_attr[6], 'wsvc_t': line_attr[7], 'asvc_t': line_attr[8], 'w': line_attr[9], 'b': line_attr[10]}
      else: pass
      
-     return iostat
+    return iostat
 
 
 iostat = iostat()
