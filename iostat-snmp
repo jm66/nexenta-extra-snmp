@@ -46,7 +46,7 @@ iostats = json.load(open(iostat_fn))
 result = []
 
 i = 1
-for dev in iostats.keys()
+for dev in iostats.keys():
    result.append((BASE_OID + '.2.1.' + str(i), ('string', dev)))
    result.append((BASE_OID + '.2.2.' + str(i), lambda oid, fs=dev: io_rs(fs)))
    result.append((BASE_OID + '.2.3.' + str(i), lambda oid, fs=dev: io_ws(fs)))
