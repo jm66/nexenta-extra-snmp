@@ -1,0 +1,66 @@
+#!/usr/bin/python
+
+BASE_OID = '.1.3.6.1.4.1.25359.12'
+
+import sys, commands, re, snmpresponse
+import simplejson as json
+
+def io_rs(dev):
+   return('gauge', iostats[dev]['rs']) # reads per second
+
+def io_ws(dev):
+   return('gauge', iostats[dev]['ws']) # writes per second
+
+def io_krs(dev):
+   return('gauge', iostats[dev]['krs']) # kilobytes read per second
+
+def io_kws(dev):
+   return('gauge', iostats[dev]['kws']) #  kilobytes written per second
+
+def io_wait(dev):
+   return('gauge', iostats[dev]['wait']) # I/O operations held in the device driver
+
+def io_actv(dev):
+   return('gauge', iostats[dev]['actv']) # I/O operations accepted
+
+def io_wsvct(dev):
+   return('gauge', iostats[dev]['wsvc_t']) # average service time in wait queue, in milliseconds
+
+def io_asvc_t(dev):
+   return('gauge', iostats[dev]['asvc_t']) # average service time of active transactions, in milliseconds
+
+def io_w(dev):
+   return('gauge', iostats[dev]['w']) # percent of time there are transactions waiting for service
+
+def io_b(dev):
+   return('gauge', iostats[dev]['b']) # percent of time the disk is busy (transactions in progress)
+
+# nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
+# zpooliostat     OBJECT IDENTIFIER ::= {nymnetworks 1}
+# iostat          OBJECT IDENTIFIER ::= {iostat 1}
+iostat_fn = "/tmp/iostat.snmp.cache"
+
+iostats = json.load(open(iostat_fn))
+# iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
+
+result = []
+
+i = 1
+for dev in iostats.keys()
+   result.append((BASE_OID + '.2.1.' + str(i), ('string', dev)))
+   result.append((BASE_OID + '.2.2.' + str(i), lambda oid, fs=dev: io_rs(fs)))
+   result.append((BASE_OID + '.2.3.' + str(i), lambda oid, fs=dev: io_ws(fs)))
+   result.append((BASE_OID + '.2.4.' + str(i), lambda oid, fs=dev: io_krs(fs)))
+   result.append((BASE_OID + '.2.5.' + str(i), lambda oid, fs=dev: io_kws(fs)))
+   result.append((BASE_OID + '.2.6.' + str(i), lambda oid, fs=dev: io_wait(fs)))
+   result.append((BASE_OID + '.2.7.' + str(i), lambda oid, fs=dev: io_actv(fs)))
+   result.append((BASE_OID + '.2.8.' + str(i), lambda oid, fs=dev: io_wsvct(fs)))
+   result.append((BASE_OID + '.2.9.' + str(i), lambda oid, fs=dev: io_asvc_t(fs)))
+   result.append((BASE_OID + '.2.10.' + str(i), lambda oid, fs=dev: io_w(fs)))
+   result.append((BASE_OID + '.2.11.' + str(i), lambda oid, fs=dev: io_b(fs)))
+   i += 1
+
+operation = sys.argv[1]
+req_oid = sys.argv[2]
+
+snmpresponse.respond_to(operation, req_oid, result)
