@@ -38,7 +38,7 @@ def io_b(dev):
 # nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
 # zpooliostat     OBJECT IDENTIFIER ::= {nymnetworks 1}
 # iostat          OBJECT IDENTIFIER ::= {iostat 1}
-iostat_fn = "/tmp/iostat.snmp.cache"
+iostat_fn = "/tmp/iostat.cache"
 
 iostats = json.load(open(iostat_fn))
 # iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
