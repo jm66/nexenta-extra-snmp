@@ -5,13 +5,20 @@ import simplejson as json
 
 # iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
 
+command = "iostat -xntpz 1 2 | awk 'n > 1 { print ; next } $NF == \"device\" { n++ }'"
+command = 'iostat -xntpz | egrep -v "tty|tout|extended|device"'
+
+def devices(command):
+    devices = [ re.split('\s+', line) for line in commands.getoutput(command).split("\n") ]
+    devs = [  row[11] for row in devices if len(row) > 5 ]
+    return devs
+
 def toInt(n):
     return int(round(float(n)))
 
-def iostat():
+def iostat(command):
     # r/s    w/s   kr/s   kw/s wait actv wsvc_t asvc_t  %w  %b device
     iostat = {}
-    command = 'iostat -xntpz | egrep -v "tty|tout|extended|device"'
     output = commands.getoutput(command).split("\n")
     for line in output:
      line_attr=re.split('\s+', line)
@@ -27,7 +34,9 @@ def iostat():
     return iostat
 
 
-iostat = iostat()
+iostats = iostat(command)
+devs = devices()
 iostat_fn = "/tmp/iostat.snmp.cache"
+devs_fn = "/tmp/iostat.devs.snmp.cache"
 
-json.dump(iostat, open(iostat_fn,'w'))
+json.dump(iostats, open(iostat_fn,'w'))
