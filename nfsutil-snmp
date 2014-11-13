@@ -3,6 +3,7 @@
 BASE_OID = '.1.3.6.1.4.1.25359.2'
 
 import sys, commands, re, snmpresponse
+import simplejson as json
 
 fjson = '/tmp/nfsutil.snmp.cache'
 nfsutil = json.load(open(fjson,'r'))
