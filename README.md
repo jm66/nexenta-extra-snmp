@@ -56,10 +56,9 @@ ZFS L2ARC hit rate and IO rate. Have a look in the MIB or in the source for
 more detailed descriptions of the individual variables. 
 
 To use, drop the scripts
-
-    snmpresponse.py
-    zfs-snmp
-    net-snmp
+    
+    cd /opt
+    git clone git@gitlab.eis.utoronto.ca:hig/solaris-extra-snmp.git
 
 in for example `/opt/solaris-extra-snmp`, add the following to `/etc/sma/snmp/snmpd.conf`:
 
@@ -67,7 +66,10 @@ in for example `/opt/solaris-extra-snmp`, add the following to `/etc/sma/snmp/sn
     pass .1.3.6.1.4.1.25359.1 /opt/solaris-extra-snmp/zfs-snmp
     pass .1.3.6.1.4.1.25359.5 /opt/solaris-extra-snmp/net-snmp # Optional, for IPNet Stats
     pass .1.3.6.1.4.1.25359.9 /opt/solaris-extra-snmp/zpio-snmp
-    pass .1.3.6.1.4.1.25359.12 /opt/solaris-extra-snmp/iostat-snmp  
+    pass .1.3.6.1.4.1.25359.12 /opt/solaris-extra-snmp/iostat-snmp
+   
+    # NFS Stats
+    pass .1.3.6.1.4.1.25359.2 /opt/solaris-extra-snmp/nfsutil-snmp  
 
 add cache sripts that generates cache files in crontab:
 
@@ -83,12 +85,17 @@ add cache sripts that generates cache files in crontab:
     # will generate cache files in /tmp
     * * * * * /opt/solaris-extra-snmp/iostat.py
 
+    # parsing /perflogs/nfsutil.out last line
+    # every minute. Will generate cache file in /tmp
+    * * * * * /opt/solaris-extra-snmp/nfsutil.py
+
 Previous script will generate four cache files:
 
     -rw-r--r-- 1 root root 35K Apr 25 11:21 /tmp/zfss_full.snmp.cache
     -rw-r--r-- 1 root root 335 Apr 25 11:21 /tmp/zpools_health.snmp.cache
     -rw-r--r-- 1 root root 141 Apr 25 11:21 /tmp/zvols_full.snmp.cache
     -rw-r--r-- 1 root root 38K Apr 25 11:21 /tmp/zfs_stats.snmp.cache
+    -rw-r--r-- 1 root root 112 Nov 13 16:51 /tmp/nfsutil.snmp.cache
 
 Those cache files will be read by the zfs-snmp script in order to improve performance
  
