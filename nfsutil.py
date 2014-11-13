@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import re,commands
+import re,commands,json
 
 date_re = "(\d*\s[A-Za-z]*\s\d*\s\d*:\d*:\d*\s)"
 record_re = "\d*\s[A-Za-z]*\s\d*\s\d*:\d*:\d*\s(.*)"
