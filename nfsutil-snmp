@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+BASE_OID = '.1.3.6.1.4.1.25359.2'
+
+import sys, commands, re, snmpresponse
+
+fjson = '/tmp/nfsutil.snmp.cache'
+nfsutil = json.load(open(fjson,'r'))
+
+result = [
+    ( BASE_OID + '.2.1.0', ('gauge', nfsutil['max_nfs_req'])),
+    ( BASE_OID + '.2.2.0', ('gauge', nfsutil['max_active_threads'])),
+    ( BASE_OID + '.2.3.0', ('gauge', nfsutil['thread_pool_util']),
+]
+
+operation = sys.argv[1]
+req_oid = sys.argv[2]
+
+snmpresponse.respond_to(operation, req_oid, result)
