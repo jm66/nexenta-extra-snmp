@@ -11,7 +11,7 @@ nfsutil = json.load(open(fjson,'r'))
 result = [
     ( BASE_OID + '.2.1.0', ('gauge', nfsutil['max_nfs_req'])),
     ( BASE_OID + '.2.2.0', ('gauge', nfsutil['max_active_threads'])),
-    ( BASE_OID + '.2.3.0', ('gauge', nfsutil['thread_pool_util']),
+    ( BASE_OID + '.2.3.0', ('gauge', nfsutil['thread_pool_util'])),
 ]
 
 operation = sys.argv[1]
