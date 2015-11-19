@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import commands
 import re
-
+import subprocess
 from tools import json
 from tools.configuration import ZPOOLS_CACHE_FILE, ZPOOLS_IO_CACHE_FILE, \
     ZPOOLS_COMMAND, ZPOOLS_IO_COMMAND
@@ -76,23 +75,26 @@ def toN(n):
 
 
 def zfs_pools():
-    pools = [re.split('\s+', line) for line in commands.getoutput(ZPOOLS_COMMAND).split("\n")]
-    return [row[0] for row in pools]
+    pools_stdout = subprocess.Popen(ZPOOLS_COMMAND, shell=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+    return [line.replace('\n', '') for line in pools_stdout.stdout.readlines()]
 
 
 def zpool_iostats(zpools):
-    zpios = dict()
+    zpios = list()
     for p in zpools:
-        zpios[p] = zpoolio_simple(p)
+        zpios.append(zpoolio_simple(p))
     return zpios
 
 
 def zpoolio_simple(pool):
     zpio = dict()
-    output = commands.getoutput(ZPOOLS_IO_COMMAND % pool)
-    e = re.split("\s+", output)
-    zpio[pool] = {'zpool': e[0],
-                  'calloc': toMB(normalize(e[1])),
+    output = subprocess.Popen(ZPOOLS_IO_COMMAND % pool, shell=True,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT)
+    e = re.split("\s+", output.stdout.read())
+    zpio[pool] = {'calloc': toMB(normalize(e[1])),
                   'cfree':  toMB(normalize(e[2])),
                   'oread': toN(normN(e[3])),
                   'owrite': toN(normN(e[4])),
