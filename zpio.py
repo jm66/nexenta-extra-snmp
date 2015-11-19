@@ -89,7 +89,7 @@ def zpool_iostats(zpools):
 
 def zpoolio_simple(pool):
     zpio = dict()
-    output = commands.getoutput(ZPOOLS_IO_COMMAND.format(pool))
+    output = commands.getoutput(ZPOOLS_IO_COMMAND % pool)
     e = re.split("\s+", output)
     zpio[pool] = {'zpool': e[0],
                   'calloc': toMB(normalize(e[1])),
@@ -104,8 +104,8 @@ def zpoolio_simple(pool):
 
 
 def save_to_json(dict_var, file_name):
-    with open(file_name, 'w'):
-        json.dump(dict_var, file_name)
+    with open(file_name, 'w') as io_file_name:
+        json.dump(dict_var, io_file_name)
 
 
 def main():
@@ -113,10 +113,10 @@ def main():
     zpools = zfs_pools()
 
     # saves zpool list in json file
-    save_to_json(ZPOOLS_CACHE_FILE, zpools)
+    save_to_json(zpools, ZPOOLS_CACHE_FILE)
 
     # gets zpool iostats and saves in json file
-    save_to_json(ZPOOLS_IO_CACHE_FILE, zpool_iostats(zpools))
+    save_to_json(zpool_iostats(zpools), ZPOOLS_IO_CACHE_FILE)
     return 0
 
 
