@@ -1,66 +1,121 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
-BASE_OID = '.1.3.6.1.4.1.25359.12'
+import sys
+import snmpresponse
+from tools import json
+from tools.configuration import IOSTAT_BASE_OID as BASE_OID
+from tools.configuration import IOSTAT_CACHE_FILE
 
-import sys, commands, re, snmpresponse
-import simplejson as json
 
-def io_rs(dev):
-   return ('gauge', iostats[dev]['rs']) # reads per second
+def io_rs(device):
+    """ Reads per Second
+    :param device: device
+    :return: value
+    """
+    return 'gauge', iostats[device]['rs']
 
-def io_ws(dev):
-   return ('gauge', iostats[dev]['ws']) # writes per second
 
-def io_krs(dev):
-   return ('gauge', iostats[dev]['krs']) # kilobytes read per second
+def io_ws(device):
+    """  writes per second
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['ws']
 
-def io_kws(dev):
-   return ('gauge', iostats[dev]['kws']) #  kilobytes written per second
 
-def io_wait(dev):
-   return ('gauge', iostats[dev]['wait']) # I/O operations held in the device driver
+def io_krs(device):
+    """ kilobytes read per second
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['krs']
 
-def io_actv(dev):
-   return ('gauge', iostats[dev]['actv']) # I/O operations accepted
 
-def io_wsvct(dev):
-   return ('gauge', iostats[dev]['wsvc_t']) # average service time in wait queue, in milliseconds
+def io_kws(device):
+    """ kilobytes written per second
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['kws']
 
-def io_asvc_t(dev):
-   return ('gauge', iostats[dev]['asvc_t']) # average service time of active transactions, in milliseconds
 
-def io_w(dev):
-   return ('gauge', iostats[dev]['w']) # percent of time there are transactions waiting for service
+def io_wait(device):
+    """ I/O operations held in the device driver
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['wait']
 
-def io_b(dev):
-   return ('gauge', iostats[dev]['b']) # percent of time the disk is busy (transactions in progress)
+
+def io_actv(device):
+    """ # I/O operations accepted
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['actv']
+
+
+def io_wsvct(device):
+    """ average service time in wait queue, in milliseconds
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['wsvc_t']
+
+
+def io_asvc_t(device):
+    """ average service time of active transactions, in milliseconds
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['asvc_t']
+
+
+def io_w(device):
+    """ percent of time there are transactions waiting for service
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['w']
+
+
+def io_b(device):
+    """ percent of time the disk is busy (transactions in progress)
+    :param device: device
+    :return:
+    """
+    return 'gauge', iostats[device]['b']
 
 # nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
 # zpooliostat     OBJECT IDENTIFIER ::= {nymnetworks 1}
 # iostat          OBJECT IDENTIFIER ::= {iostat 1}
-iostat_fn = "/tmp/iostat.cache"
 
-iostats = json.load(open(iostat_fn))
-# iostat_e = {'device': None,'rs': None, 'ws': None, 'krs':None, 'kws': None, 'wait': None, 'actv': None, 'wsvc_t': None, 'asvc_t': None,'w': None, 'b': None}
 
-result = []
+def main():
+    with open(IOSTAT_CACHE_FILE) as cache_file:
+        iostats = json.load(cache_file)
+        result = []
+        i = 1
+        for dev in iostats.keys():
+            result.append((BASE_OID + '.2.1.' + str(i), ('string', dev)))
+            result.append((BASE_OID + '.2.2.' + str(i), ('gauge', iostats[dev]['rs'])))
+            result.append((BASE_OID + '.2.3.' + str(i), ('gauge', iostats[dev]['ws'])))
+            result.append((BASE_OID + '.2.4.' + str(i), ('gauge', iostats[dev]['krs'])))
+            result.append((BASE_OID + '.2.5.' + str(i), ('gauge', iostats[dev]['kws'])))
+            result.append((BASE_OID + '.2.6.' + str(i), ('gauge', iostats[dev]['wait'])))
+            result.append((BASE_OID + '.2.7.' + str(i), ('gauge', iostats[dev]['actv'])))
+            result.append((BASE_OID + '.2.8.' + str(i), ('gauge', iostats[dev]['wsvc_t'])))
+            result.append((BASE_OID + '.2.9.' + str(i), ('gauge', iostats[dev]['asvc_t'])))
+            result.append((BASE_OID + '.2.10.' + str(i), ('gauge', iostats[dev]['w'])))
+            result.append((BASE_OID + '.2.11.' + str(i), ('gauge', iostats[dev]['b'])))
+            i += 1
 
-i = 1
-for dev in iostats.keys():
-   result.append((BASE_OID + '.2.1.' + str(i), ('string', dev)))
-   result.append((BASE_OID + '.2.2.' + str(i), ('gauge', iostats[dev]['rs'])))
-   result.append((BASE_OID + '.2.3.' + str(i), ('gauge', iostats[dev]['ws'])))
-   result.append((BASE_OID + '.2.4.' + str(i), ('gauge', iostats[dev]['krs'])))
-   result.append((BASE_OID + '.2.5.' + str(i), ('gauge', iostats[dev]['kws'])))
-   result.append((BASE_OID + '.2.6.' + str(i), ('gauge', iostats[dev]['wait'])))
-   result.append((BASE_OID + '.2.7.' + str(i), ('gauge', iostats[dev]['actv'])))
-   result.append((BASE_OID + '.2.8.' + str(i), ('gauge', iostats[dev]['wsvc_t'])))
-   result.append((BASE_OID + '.2.9.' + str(i), ('gauge', iostats[dev]['asvc_t'])))
-   result.append((BASE_OID + '.2.10.' + str(i), ('gauge', iostats[dev]['w'])))
-   result.append((BASE_OID + '.2.11.' + str(i), ('gauge', iostats[dev]['b'])))
-   i += 1
+        operation = sys.argv[1]
+        req_oid = sys.argv[2]
 
-operation = sys.argv[1]
-req_oid = sys.argv[2]
+        snmpresponse.respond_to(operation, req_oid, result)
 
-snmpresponse.respond_to(operation, req_oid, result)
+    return
+# Start program
+if __name__ == "__main__":
+    main()

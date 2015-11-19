@@ -67,22 +67,22 @@ zfs_stats = json.load(open(zfs_stats_fn))
 zfsfs = json.load(open(zfsfs_fn))
 
 result = [
-    ( BASE_OID + '.2.1.0', zfs_arc_size()),
-    ( BASE_OID + '.2.2.0', zfs_arc_meta()),
-    ( BASE_OID + '.2.3.0', zfs_arc_data()),
-    ( BASE_OID + '.2.4.0', zfs_arc_hits()),
-    ( BASE_OID + '.2.5.0', zfs_arc_misses()),
-    ( BASE_OID + '.2.6.0', zfs_arc_c()),
-    ( BASE_OID + '.2.7.0', zfs_arc_p()),
+    (BASE_OID + '.2.1.0', zfs_arc_size()),
+    (BASE_OID + '.2.2.0', zfs_arc_meta()),
+    (BASE_OID + '.2.3.0', zfs_arc_data()),
+    (BASE_OID + '.2.4.0', zfs_arc_hits()),
+    (BASE_OID + '.2.5.0', zfs_arc_misses()),
+    (BASE_OID + '.2.6.0', zfs_arc_c()),
+    (BASE_OID + '.2.7.0', zfs_arc_p()),
 
-    ( BASE_OID + '.3.1.0', zfs_l2arc_hits()),
-    ( BASE_OID + '.3.2.0', zfs_l2arc_misses()),
-    ( BASE_OID + '.3.3.0', zfs_l2arc_read()),
-    ( BASE_OID + '.3.4.0', zfs_l2arc_write()),
+    (BASE_OID + '.3.1.0', zfs_l2arc_hits()),
+    (BASE_OID + '.3.2.0', zfs_l2arc_misses()),
+    (BASE_OID + '.3.3.0', zfs_l2arc_read()),
+    (BASE_OID + '.3.4.0', zfs_l2arc_write()),
 
-    ( BASE_OID + '.4.1.0', zfs_read()),
-    ( BASE_OID + '.4.2.0', zfs_readdir()),
-    ( BASE_OID + '.4.3.0', zfs_write()),
+    (BASE_OID + '.4.1.0', zfs_read()),
+    (BASE_OID + '.4.2.0', zfs_readdir()),
+    (BASE_OID + '.4.3.0', zfs_write()),
 ]
 
 i = 1
