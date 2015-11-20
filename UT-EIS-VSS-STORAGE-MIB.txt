@@ -1,0 +1,148 @@
+-- Copyright 2013, Nexenta Systems, Inc.  All rights reserved.
+
+UT-EIS-VSS-STORAGE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+        iostat
+                FROM UT-EIS-VSS-MIB
+        MODULE-IDENTITY, OBJECT-TYPE, Unsigned32, Counter64, TimeTicks
+                FROM SNMPv2-SMI
+        TEXTUAL-CONVENTION, DisplayString, TruthValue
+                FROM SNMPv2-TC;
+
+vssstorageMIB MODULE-IDENTITY
+        LAST-UPDATED "201511190000Z"
+        ORGANIZATION "University of Toronto, EIS"
+        CONTACT-INFO "VSS"
+        DESCRIPTION "MIB exposing iostat counters per device"
+        REVISION    "201511190000Z"
+        DESCRIPTION "Initial revision"
+
+        ::= { iostat 1 }
+
+vssstorageMIBObjects OBJECT IDENTIFIER ::= { vssstorageMIB 1 }
+
+
+vssstorageIOMIBObjects OBJECT IDENTIFIER ::= { vssstorageMIBObjects 2 }
+
+        vssStorageIOTable OBJECT-TYPE
+                SYNTAX       SEQUENCE OF IoDeviceEntry
+                MAX-ACCESS   not-accessible
+                STATUS       current
+                DESCRIPTION
+                        "IO conceptual table for device statistics"
+                ::= { vssstorageIOMIBObjects 1 }
+
+        ioDeviceEntry OBJECT-TYPE
+                SYNTAX          IoDeviceEntry
+                MAX-ACCESS      not-accessible
+                STATUS          current
+                DESCRIPTION
+                        "IO device statistics conceptual row"
+                INDEX           { deviceName }
+                ::= { vssStorageIOTable 1 }
+
+        IoDeviceEntry ::= SEQUENCE {
+                deviceName                  DisplayString,
+                readsPs                     Unsigned32,
+                writesPs                    Unsigned32,
+                kbRead                      Unsigned32,
+                kbWritten                   Unsigned32,
+                wait                        Unsigned32,
+                actv                        Unsigned32,
+                wsvcTime                    Unsigned32,
+                asvcTime                    Unsigned32,
+                waitPct                     Unsigned32,
+                busyPct                     Unsigned32
+        }
+
+        deviceName OBJECT-TYPE
+                SYNTAX          DisplayString
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "device Name"
+                ::= { ioDeviceEntry 1 }
+
+        readsPs OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "reads per second"
+                ::= { ioDeviceEntry 2 }
+
+        writesPs OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "writes per second"
+                ::= { ioDeviceEntry 3 }
+
+        kbRead OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "kilobytes read per second"
+                ::= { ioDeviceEntry 4 }
+
+        kbWritten OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "kilobytes written per second"
+                ::= { ioDeviceEntry 5 }
+
+        wait OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "average number of transactions waiting for service"
+                ::= { ioDeviceEntry 6 }
+
+        actv OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "average number of transactions actively being serviced"
+                ::= { ioDeviceEntry 7 }
+
+        wsvcTime OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "average service time in wait queue, in milliseconds"
+                ::= { ioDeviceEntry 8 }
+
+        asvcTime OBJECT-TYPE
+                SYNTAX          Unsigned32
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "average service time of active transactions, in milliseconds"
+                ::= { ioDeviceEntry 9 }
+
+        waitPct OBJECT-TYPE
+                SYNTAX          Unsigned32 (0..100)
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "percent of time there are transactions waiting for service (queue non-empty)"
+                ::= { ioDeviceEntry 10 }
+
+        busyPct OBJECT-TYPE
+                SYNTAX          Unsigned32 (0..100)
+                MAX-ACCESS      read-only
+                STATUS          current
+                DESCRIPTION
+                        "percent of time the disk is busy (transactions in progress)"
+                ::= { ioDeviceEntry 11 }
+
+
+END

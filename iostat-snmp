@@ -5,117 +5,58 @@ import snmpresponse
 from tools import json
 from tools.configuration import IOSTAT_BASE_OID as BASE_OID
 from tools.configuration import IOSTAT_CACHE_FILE
-
-
-def io_rs(device):
-    """ Reads per Second
-    :param device: device
-    :return: value
-    """
-    return 'gauge', iostats[device]['rs']
-
-
-def io_ws(device):
-    """  writes per second
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['ws']
-
-
-def io_krs(device):
-    """ kilobytes read per second
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['krs']
-
-
-def io_kws(device):
-    """ kilobytes written per second
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['kws']
-
-
-def io_wait(device):
-    """ I/O operations held in the device driver
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['wait']
-
-
-def io_actv(device):
-    """ # I/O operations accepted
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['actv']
-
-
-def io_wsvct(device):
-    """ average service time in wait queue, in milliseconds
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['wsvc_t']
-
-
-def io_asvc_t(device):
-    """ average service time of active transactions, in milliseconds
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['asvc_t']
-
-
-def io_w(device):
-    """ percent of time there are transactions waiting for service
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['w']
-
-
-def io_b(device):
-    """ percent of time the disk is busy (transactions in progress)
-    :param device: device
-    :return:
-    """
-    return 'gauge', iostats[device]['b']
-
-# nymnetworks     OBJECT IDENTIFIER ::= {enterprises 25359}
-# zpooliostat     OBJECT IDENTIFIER ::= {nymnetworks 1}
-# iostat          OBJECT IDENTIFIER ::= {iostat 1}
+from tools import IODevice
 
 
 def main():
     with open(IOSTAT_CACHE_FILE) as cache_file:
-        iostats = json.load(cache_file)
-        result = []
+        snmp_result = list()
+        iostat_json = json.load(cache_file)
+        iostat = list()
+
+        # Parsing JSON object list to IODevice list
+        for element in iostat_json:
+            temp_obj = IODevice()
+            iostat.append(temp_obj.from_json(element))
+
+        # Generating a SNMP data list
         i = 1
-        for dev in iostats.keys():
-            result.append((BASE_OID + '.2.1.' + str(i), ('string', dev)))
-            result.append((BASE_OID + '.2.2.' + str(i), ('gauge', iostats[dev]['rs'])))
-            result.append((BASE_OID + '.2.3.' + str(i), ('gauge', iostats[dev]['ws'])))
-            result.append((BASE_OID + '.2.4.' + str(i), ('gauge', iostats[dev]['krs'])))
-            result.append((BASE_OID + '.2.5.' + str(i), ('gauge', iostats[dev]['kws'])))
-            result.append((BASE_OID + '.2.6.' + str(i), ('gauge', iostats[dev]['wait'])))
-            result.append((BASE_OID + '.2.7.' + str(i), ('gauge', iostats[dev]['actv'])))
-            result.append((BASE_OID + '.2.8.' + str(i), ('gauge', iostats[dev]['wsvc_t'])))
-            result.append((BASE_OID + '.2.9.' + str(i), ('gauge', iostats[dev]['asvc_t'])))
-            result.append((BASE_OID + '.2.10.' + str(i), ('gauge', iostats[dev]['w'])))
-            result.append((BASE_OID + '.2.11.' + str(i), ('gauge', iostats[dev]['b'])))
+        for io_device in iostat:
+            dev_ascii = [str(ord(c)) for c in io_device.device]
+            dev_unique_base = '.' + '.'.join(dev_ascii) + '.'
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('string', io_device.device)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.reads_ps)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.writes_ps)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.KB_read_ps)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.KB_written_ps)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.wait)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.actv)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.wsvc_t)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.asvc_t)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.wait_pct)))
+            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+                                ('gauge', io_device.busy_pct)))
             i += 1
 
         operation = sys.argv[1]
         req_oid = sys.argv[2]
 
-        snmpresponse.respond_to(operation, req_oid, result)
-
+        # responding SNMP
+        # snmpresponse.respond_to(operation=operation, req_oid=req_oid, result=snmp_result)
+        from pprint import pprint
+        pprint(snmp_result)
     return
+
 # Start program
 if __name__ == "__main__":
     main()
