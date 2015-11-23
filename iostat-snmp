@@ -2,7 +2,6 @@
 
 import sys
 
-from tools import IODevice
 from tools import json, snmpresponse
 from tools.configuration import IOSTAT_BASE_OID as BASE_OID
 from tools.configuration import IOSTAT_CACHE_FILE
@@ -12,40 +11,33 @@ def main():
     with open(IOSTAT_CACHE_FILE) as cache_file:
         snmp_result = list()
         iostat_json = json.load(cache_file)
-        iostat = list()
-
-        # Parsing JSON object list to IODevice list
-        for element in iostat_json:
-            temp_obj = IODevice()        # creating new obj
-            temp_obj.from_json(element)  # parsing dict
-            iostat.append(temp_obj)      # adding obj to list
 
         # Generating a SNMP data list
-        for io_device in iostat:
-            dev_ascii = [str(ord(c)) for c in io_device.device]
+        for io_device in iostat_json:
+            dev_ascii = [str(ord(c)) for c in io_device['device']]
             dev_unique_base = '.'.join(dev_ascii)
             snmp_result.append((BASE_OID + '.1.' + dev_unique_base,
-                                ('string', io_device.device)))
+                                ('string', io_device['device'])))
             snmp_result.append((BASE_OID + '.2.' + dev_unique_base,
-                                ('gauge', io_device.reads_ps)))
+                                ('gauge', io_device['reads_ps'])))
             snmp_result.append((BASE_OID + '.3.' + dev_unique_base,
-                                ('gauge', io_device.writes_ps)))
+                                ('gauge', io_device['writes_ps'])))
             snmp_result.append((BASE_OID + '.4.' + dev_unique_base,
-                                ('gauge', io_device.KB_read_ps)))
+                                ('gauge', io_device['KB_read_ps'])))
             snmp_result.append((BASE_OID + '.5.' + dev_unique_base,
-                                ('gauge', io_device.KB_written_ps)))
+                                ('gauge', io_device['KB_written_ps'])))
             snmp_result.append((BASE_OID + '.6.' + dev_unique_base,
-                                ('gauge', io_device.wait)))
+                                ('gauge', io_device['wait'])))
             snmp_result.append((BASE_OID + '.7.' + dev_unique_base,
-                                ('gauge', io_device.actv)))
+                                ('gauge', io_device['actv'])))
             snmp_result.append((BASE_OID + '.8.' + dev_unique_base,
-                                ('gauge', io_device.wsvc_t)))
+                                ('gauge', io_device['wsvc_t'])))
             snmp_result.append((BASE_OID + '.9.' + dev_unique_base,
-                                ('gauge', io_device.asvc_t)))
+                                ('gauge', io_device['asvc_t'])))
             snmp_result.append((BASE_OID + '.10.' + dev_unique_base,
-                                ('gauge', io_device.wait_pct)))
+                                ('gauge', io_device['wait_pct'])))
             snmp_result.append((BASE_OID + '.11.' + dev_unique_base,
-                                ('gauge', io_device.busy_pct)))
+                                ('gauge', io_device['busy_pct'])))
 
         operation = sys.argv[1]
         req_oid = sys.argv[2]
