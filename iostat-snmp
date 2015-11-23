@@ -16,7 +16,7 @@ def main():
         for io_device in iostat_json:
             dev_ascii = [str(ord(c)) for c in io_device['device']]
             dev_unique_base = '.'.join(dev_ascii)
-            pp.add_str(BASE_OID + '.1.' + dev_unique_base, int(io_device['device']))
+            pp.add_str(BASE_OID + '.1.' + dev_unique_base, io_device['device'])
             pp.add_gau(BASE_OID + '.2.' + dev_unique_base, int(io_device['reads_ps']))
             pp.add_gau(BASE_OID + '.3.' + dev_unique_base, int(io_device['writes_ps']))
             pp.add_gau(BASE_OID + '.4.' + dev_unique_base, int(io_device['KB_read_ps']))
