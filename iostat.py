@@ -18,7 +18,7 @@ def iostat():
         # ignoring first and last element
         device_serial = re.split('\s+', line)[1:-1]
         temp_device = IODevice()
-        temp_device.device = float(device_serial[10])
+        temp_device.device = device_serial[10]
         temp_device.reads_ps = float(device_serial[0])
         temp_device.writes_ps = float(device_serial[1])
         temp_device.KB_read_ps = float(device_serial[2])
