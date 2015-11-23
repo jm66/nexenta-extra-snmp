@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-
 def decompose_oid(oid):
     return [int(o) for o in oid.split('.')[1:]]
 
