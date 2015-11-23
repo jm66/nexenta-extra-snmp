@@ -1,53 +1,34 @@
 #!/usr/bin/env python
 
-import sys
-
-from tools import json, snmpresponse
+from tools import json
 from tools.configuration import IOSTAT_BASE_OID as BASE_OID
-from tools.configuration import IOSTAT_CACHE_FILE
+from tools.configuration import IOSTAT_CACHE_FILE, POLLING_INTERVAL
+import snmp_passpersist as snmp
 
 
 def main():
+    pp = snmp.PassPersist(BASE_OID)
+
     with open(IOSTAT_CACHE_FILE) as cache_file:
-        snmp_result = list()
         iostat_json = json.load(cache_file)
 
         # Generating a SNMP data list
         for io_device in iostat_json:
             dev_ascii = [str(ord(c)) for c in io_device['device']]
             dev_unique_base = '.'.join(dev_ascii)
-            snmp_result.append((BASE_OID + '.1.' + dev_unique_base,
-                                ('string', io_device['device'])))
-            snmp_result.append((BASE_OID + '.2.' + dev_unique_base,
-                                ('gauge', io_device['reads_ps'])))
-            snmp_result.append((BASE_OID + '.3.' + dev_unique_base,
-                                ('gauge', io_device['writes_ps'])))
-            snmp_result.append((BASE_OID + '.4.' + dev_unique_base,
-                                ('gauge', io_device['KB_read_ps'])))
-            snmp_result.append((BASE_OID + '.5.' + dev_unique_base,
-                                ('gauge', io_device['KB_written_ps'])))
-            snmp_result.append((BASE_OID + '.6.' + dev_unique_base,
-                                ('gauge', io_device['wait'])))
-            snmp_result.append((BASE_OID + '.7.' + dev_unique_base,
-                                ('gauge', io_device['actv'])))
-            snmp_result.append((BASE_OID + '.8.' + dev_unique_base,
-                                ('gauge', io_device['wsvc_t'])))
-            snmp_result.append((BASE_OID + '.9.' + dev_unique_base,
-                                ('gauge', io_device['asvc_t'])))
-            snmp_result.append((BASE_OID + '.10.' + dev_unique_base,
-                                ('gauge', io_device['wait_pct'])))
-            snmp_result.append((BASE_OID + '.11.' + dev_unique_base,
-                                ('gauge', io_device['busy_pct'])))
+            pp.add_str(BASE_OID + '.1.' + dev_unique_base, io_device['device'])
+            pp.add_gau(BASE_OID + '.2.' + dev_unique_base, io_device['reads_ps'])
+            pp.add_gau(BASE_OID + '.3.' + dev_unique_base, io_device['writes_ps'])
+            pp.add_gau(BASE_OID + '.4.' + dev_unique_base, io_device['KB_read_ps'])
+            pp.add_gau(BASE_OID + '.5.' + dev_unique_base, io_device['KB_written_ps'])
+            pp.add_gau(BASE_OID + '.6.' + dev_unique_base, io_device['wait'])
+            pp.add_gau(BASE_OID + '.7.' + dev_unique_base, io_device['actv'])
+            pp.add_gau(BASE_OID + '.8.' + dev_unique_base, io_device['wsvc_t'])
+            pp.add_gau(BASE_OID + '.9.' + dev_unique_base, io_device['asvc_t'])
+            pp.add_gau(BASE_OID + '.10.' + dev_unique_base, io_device['wait_pct'])
+            pp.add_gau(BASE_OID + '.11.' + dev_unique_base, io_device['busy_pct'])
 
-        operation = sys.argv[1]
-        req_oid = sys.argv[2]
-
-        # responding SNMP
-        snmpresponse.respond_to(operation=operation,
-                                req_oid=req_oid,
-                                result=snmp_result)
-        # from pprint import pprint
-        # pprint(snmp_result)
+    pp.start(user_func=lambda: True, refresh=POLLING_INTERVAL)
     return
 
 # Start program
