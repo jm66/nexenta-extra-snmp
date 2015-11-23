@@ -6,9 +6,7 @@ from tools.configuration import IOSTAT_CACHE_FILE, POLLING_INTERVAL
 import snmp_passpersist as snmp
 
 
-def main():
-    pp = snmp.PassPersist(BASE_OID)
-
+def update_data():
     with open(IOSTAT_CACHE_FILE) as cache_file:
         iostat_json = json.load(cache_file)
 
@@ -28,7 +26,12 @@ def main():
             pp.add_gau(BASE_OID + '.10.' + dev_unique_base, int(io_device['wait_pct']))
             pp.add_gau(BASE_OID + '.11.' + dev_unique_base, int(io_device['busy_pct']))
 
-    pp.start(user_func=lambda: True, refresh=POLLING_INTERVAL)
+
+def main():
+    global pp
+
+    pp = snmp.PassPersist(BASE_OID)
+    pp.start(user_func=update_data, refresh=POLLING_INTERVAL)
     return
 
 # Start program
