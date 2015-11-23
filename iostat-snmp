@@ -23,7 +23,7 @@ def main():
         # Generating a SNMP data list
         for io_device in iostat:
             dev_ascii = [str(ord(c)) for c in io_device.device]
-            dev_unique_base = '.'.join(dev_ascii) + '.'
+            dev_unique_base = '.'.join(dev_ascii)
             snmp_result.append((BASE_OID + '.1.' + dev_unique_base,
                                 ('string', io_device.device)))
             snmp_result.append((BASE_OID + '.2.' + dev_unique_base,
@@ -51,9 +51,11 @@ def main():
         req_oid = sys.argv[2]
 
         # responding SNMP
-        # snmpresponse.respond_to(operation=operation, req_oid=req_oid, result=snmp_result)
-        from pprint import pprint
-        pprint(snmp_result)
+        snmpresponse.respond_to(operation=operation,
+                                req_oid=req_oid,
+                                result=snmp_result)
+        # from pprint import pprint
+        # pprint(snmp_result)
     return
 
 # Start program
