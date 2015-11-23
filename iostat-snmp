@@ -12,26 +12,26 @@ def update_data():
 
         # Generating a SNMP data list
         for io_device in iostat_json:
-            dev_ascii = [str(ord(c)) for c in io_device['device']]
-            dev_unique_base = '.'.join(dev_ascii)
-            pp.add_str(BASE_OID + '.1.' + dev_unique_base, io_device['device'])
-            pp.add_gau(BASE_OID + '.2.' + dev_unique_base, int(io_device['reads_ps']))
-            pp.add_gau(BASE_OID + '.3.' + dev_unique_base, int(io_device['writes_ps']))
-            pp.add_gau(BASE_OID + '.4.' + dev_unique_base, int(io_device['KB_read_ps']))
-            pp.add_gau(BASE_OID + '.5.' + dev_unique_base, int(io_device['KB_written_ps']))
-            pp.add_gau(BASE_OID + '.6.' + dev_unique_base, int(io_device['wait']))
-            pp.add_gau(BASE_OID + '.7.' + dev_unique_base, int(io_device['actv']))
-            pp.add_gau(BASE_OID + '.8.' + dev_unique_base, int(io_device['wsvc_t']))
-            pp.add_gau(BASE_OID + '.9.' + dev_unique_base, int(io_device['asvc_t']))
-            pp.add_gau(BASE_OID + '.10.' + dev_unique_base, int(io_device['wait_pct']))
-            pp.add_gau(BASE_OID + '.11.' + dev_unique_base, int(io_device['busy_pct']))
+            oid = pp.encode(io_device['device'])
+            pp.add_str(BASE_OID + '.1.' + oid, io_device['device'])
+            pp.add_gau(BASE_OID + '.2.' + oid, int(io_device['reads_ps']))
+            pp.add_gau(BASE_OID + '.3.' + oid, int(io_device['writes_ps']))
+            pp.add_gau(BASE_OID + '.4.' + oid, int(io_device['KB_read_ps']))
+            pp.add_gau(BASE_OID + '.5.' + oid, int(io_device['KB_written_ps']))
+            pp.add_gau(BASE_OID + '.6.' + oid, int(io_device['wait']))
+            pp.add_gau(BASE_OID + '.7.' + oid, int(io_device['actv']))
+            pp.add_gau(BASE_OID + '.8.' + oid, int(io_device['wsvc_t']))
+            pp.add_gau(BASE_OID + '.9.' + oid, int(io_device['asvc_t']))
+            pp.add_gau(BASE_OID + '.10.' + oid, int(io_device['wait_pct']))
+            pp.add_gau(BASE_OID + '.11.' + oid, int(io_device['busy_pct']))
 
 
 def main():
     global pp
 
     pp = snmp.PassPersist(BASE_OID)
-    pp.start(user_func=update_data, refresh=POLLING_INTERVAL)
+    pp.start(update_data, POLLING_INTERVAL)
+
     return
 
 # Start program
