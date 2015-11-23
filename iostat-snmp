@@ -9,21 +9,20 @@ import snmp_passpersist as snmp
 def update_data():
     with open(IOSTAT_CACHE_FILE) as cache_file:
         iostat_json = json.load(cache_file)
-
         # Generating a SNMP data list
         for io_device in iostat_json:
             oid = pp.encode(io_device['device'])
-            pp.add_str('.1.' + oid, io_device['device'])
-            pp.add_gau('.2.' + oid, int(io_device['reads_ps']))
-            pp.add_gau('.3.' + oid, int(io_device['writes_ps']))
-            pp.add_gau('.4.' + oid, int(io_device['KB_read_ps']))
-            pp.add_gau('.5.' + oid, int(io_device['KB_written_ps']))
-            pp.add_gau('.6.' + oid, int(io_device['wait']))
-            pp.add_gau('.7.' + oid, int(io_device['actv']))
-            pp.add_gau('.8.' + oid, int(io_device['wsvc_t']))
-            pp.add_gau('.9.' + oid, int(io_device['asvc_t']))
-            pp.add_gau('.10.' + oid, int(io_device['wait_pct']))
-            pp.add_gau('.11.' + oid, int(io_device['busy_pct']))
+            pp.add_str('1.' + oid, io_device['device'])
+            pp.add_gau('2.' + oid, int(io_device['reads_ps']))
+            pp.add_gau('3.' + oid, int(io_device['writes_ps']))
+            pp.add_gau('4.' + oid, int(io_device['KB_read_ps']))
+            pp.add_gau('5.' + oid, int(io_device['KB_written_ps']))
+            pp.add_gau('6.' + oid, int(io_device['wait']))
+            pp.add_gau('7.' + oid, int(io_device['actv']))
+            pp.add_gau('8.' + oid, int(io_device['wsvc_t']))
+            pp.add_gau('9.' + oid, int(io_device['asvc_t']))
+            pp.add_gau('10.' + oid, int(io_device['wait_pct']))
+            pp.add_gau('11.' + oid, int(io_device['busy_pct']))
 
 
 def main():
