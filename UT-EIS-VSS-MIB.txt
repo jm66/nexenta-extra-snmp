@@ -22,11 +22,12 @@ uteisvssMIB MODULE-IDENTITY
     DESCRIPTION
             "Initial version"
 
-    ::= { enterprises 40050 }
+    ::= { enterprises 6973 }
 
 core OBJECT IDENTIFIER ::= { uteisvssMIB 1 }
 storage OBJECT IDENTIFIER ::= { core 1 }
 iostat OBJECT IDENTIFIER ::= { storage 1 }
-virtual OBJECT IDENTIFIER ::= {core 2}
+nfs OBJECT IDENTIFIER ::= { storage 2 }
+zfs OBJECT IDENTIFIER ::= { storage 3}
 
 END

@@ -16,35 +16,37 @@ def main():
 
         # Parsing JSON object list to IODevice list
         for element in iostat_json:
-            temp_obj = IODevice()
-            iostat.append(temp_obj.from_json(element))
+            temp_obj = IODevice()        # creating new obj
+            temp_obj.from_json(element)  # parsing dict
+            iostat.append(temp_obj)      # adding obj to list
 
         # Generating a SNMP data list
-        i = 1
+
         for io_device in iostat:
+            i = 1
             dev_ascii = [str(ord(c)) for c in io_device.device]
-            dev_unique_base = '.' + '.'.join(dev_ascii) + '.'
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            dev_unique_base = '.'.join(dev_ascii) + '.'
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('string', io_device.device)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.reads_ps)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.writes_ps)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.KB_read_ps)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.KB_written_ps)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.wait)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.actv)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.wsvc_t)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.asvc_t)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.wait_pct)))
-            snmp_result.append((BASE_OID + dev_unique_base + str(i),
+            snmp_result.append((BASE_OID + str(i) + dev_unique_base,
                                 ('gauge', io_device.busy_pct)))
             i += 1
 
