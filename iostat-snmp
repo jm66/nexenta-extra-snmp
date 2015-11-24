@@ -12,17 +12,17 @@ def update_data():
         # Generating a SNMP data list
         for io_device in iostat_json:
             oid = pp.encode(io_device['device'])
-            pp.add_str(oid + '.1', io_device['device'])
-            pp.add_str(oid + '.2', int(io_device['reads_ps']))
-            pp.add_gau(oid + '.3', int(io_device['writes_ps']))
-            pp.add_gau(oid + '.4', int(io_device['KB_read_ps']))
-            pp.add_gau(oid + '.5', int(io_device['KB_written_ps']))
-            pp.add_gau(oid + '.6', int(io_device['wait']))
-            pp.add_gau(oid + '.7', int(io_device['actv']))
-            pp.add_gau(oid + '.8', int(io_device['wsvc_t']))
-            pp.add_gau(oid + '.9', int(io_device['asvc_t']))
-            pp.add_gau(oid + '.10', int(io_device['wait_pct']))
-            pp.add_gau(oid + '.11', int(io_device['busy_pct']))
+            pp.add_str('.'.join(['1', '1', oid]), io_device['device'])
+            pp.add_gau('.'.join(['1', '2', oid]), int(io_device['reads_ps']))
+            pp.add_gau('.'.join(['1', '3', oid]), int(io_device['writes_ps']))
+            pp.add_gau('.'.join(['1', '4', oid]), int(io_device['KB_read_ps']))
+            pp.add_gau('.'.join(['1', '5', oid]), int(io_device['KB_written_ps']))
+            pp.add_gau('.'.join(['1', '6', oid]), int(io_device['wait']))
+            pp.add_gau('.'.join(['1', '7', oid]), int(io_device['actv']))
+            pp.add_gau('.'.join(['1', '8', oid]), int(io_device['wsvc_t']))
+            pp.add_gau('.'.join(['1', '9', oid]), int(io_device['asvc_t']))
+            pp.add_gau('.'.join(['1', '10', oid]), int(io_device['wait_pct']))
+            pp.add_gau('.'.join(['1', '11', oid]), int(io_device['busy_pct']))
 
 
 def main():
