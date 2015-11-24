@@ -7,6 +7,9 @@ import syslog
 import errno
 import time
 import socket
+import snmp_passpersist as snmp
+__MaxOids__ = 512
+
 
 class IODevice(object):
     # r/s    w/s   kr/s   kw/s wait actv wsvc_t asvc_t  %w  %b device

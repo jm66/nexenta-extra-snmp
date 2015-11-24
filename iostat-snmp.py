@@ -1,9 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python -u
 
-from tools import json, sys, syslog, errno, time, socket
+from tools import json, sys, syslog, errno, time, socket, snmp
 from tools.configuration import IOSTAT_BASE_OID as BASE_OID
 from tools.configuration import IOSTAT_CACHE_FILE, POLLING_INTERVAL, MAX_RETRY
-import snmp_passpersist as snmp
 
 
 def update_data():
@@ -13,7 +12,7 @@ def update_data():
         iostat_json = json.load(cache_file)
         #  devices
         pp.add_gau('1.2.0', len(iostat_json))
-        # Disk IOs
+        # Disk IOs from JSON cache file
         for io_device in iostat_json:
             oid = pp.encode(io_device['device'])
             pp.add_str('1.3.1.' + oid, io_device['device'])
@@ -32,7 +31,7 @@ def update_data():
 def main():
     global pp
     # opening syslog
-    syslog.openlog(sys.argv[0], syslog.LOG_PID)
+    syslog.openlog('IOstat-snmp', 0, syslog.LOG_LOCAL0)
     # retries
     retry_timestamp = int(time.time())
     retry_counter = MAX_RETRY
@@ -43,6 +42,7 @@ def main():
             pp.start(update_data, POLLING_INTERVAL)
         except KeyboardInterrupt:
             print "Exiting on user request."
+            syslog.syslog(syslog.LOG_INFO, "Exiting")
             sys.exit(0)
         except IOError, e:
             if e.errno == errno.EPIPE:
