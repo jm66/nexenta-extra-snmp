@@ -2,6 +2,7 @@ EIS_OID = '.1.3.6.1.4.1.6973'
 STORAGE_OID = EIS_OID + '.1'  # .1.3.6.1.4.1.6973.1
 STORAGE_MIB = 'iso.org.dod.internet.private.enterprises.eis.storage'
 POLLING_INTERVAL = 60
+MAX_RETRY = 10				# Number of successives retry in case of error
 
 # IOStat
 IOSTAT_BASE_OID = STORAGE_OID + '.1'  # .1.3.6.1.4.1.6973.1.1
