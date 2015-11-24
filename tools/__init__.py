@@ -54,3 +54,75 @@ class IODevice(object):
         self.asvc_t = iodevice['asvc_t']
         self.wait_pct = iodevice['wait_pct']
         self.busy_pct = iodevice['busy_pct']
+
+
+class ZPoolDevice(object):
+    def __init__(self):
+        self.label = None
+        # IOstat
+        self.calloc = None
+        self.cfree = None
+        self.oread = None
+        self.owrite = None
+        self.bread = None
+        self.bwrite = None
+        self.lread = None
+        self.lwrite = None
+
+    def from_values(self, label, calloc, cfree, oread, owrite,
+                   bread, bwrite, lread, lwrite):
+        self.label = label
+        self.calloc = calloc
+        self.cfree = cfree
+        self.oread = oread
+        self.owrite = owrite
+        self.bread = bread
+        self.bwrite = bwrite
+        self.lread = lread
+        self.lwrite = lwrite
+
+
+    def to_json(self):
+        return {'label': self.label,
+                'capacity_alloc': self.calloc,
+                'capacity_free': self.cfree,
+                'operations_read': self.oread,
+                'operations_write': self.owrite,
+                'bandwidth_read': self.bread,
+                'bandwidth_write': self.bwrite,
+                'latency_read': self.lread,
+                'latency_write': self.lwrite}
+
+    def from_json(self, device):
+        self.label = device['label']
+        self.calloc = device['capacity_alloc']
+        self.cfree = device['capacity_free']
+        self.oread = device['operations_read']
+        self.owrite = device['operations_write']
+        self.bread = device['bandwidth_read']
+        self.bwrite = device['bandwidth_write']
+        self.lread = device['latency_read']
+        self.lwrite = device['latency_write']
+
+
+class ZPool(ZPoolDevice):
+    def __init__(self):
+        super(ZPool, self).__init__()
+        self.devices = list()  # list of ZpoolDevice
+        self.cache = list()    # list of ZpoolDevice
+        self.log = list()      # list of ZpoolDevice
+
+    def to_json(self):
+        return {'label': self.label,
+                'capacity_alloc': self.calloc,
+                'capacity_free': self.cfree,
+                'operations_read': self.oread,
+                'operations_write': self.owrite,
+                'bandwidth_read': self.bread,
+                'bandwidth_write': self.bwrite,
+                'latency_read': self.lread,
+                'latency_write': self.lwrite,
+                'devices': [dev.to_json() for dev in self.devices],
+                'cache': [dev.to_json() for dev in self.cache],
+                'log': [dev.to_json() for dev in self.log]
+                }
