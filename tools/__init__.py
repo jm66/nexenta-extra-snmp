@@ -8,7 +8,6 @@ import errno
 import time
 import socket
 import snmp_passpersist as snmp
-__MaxOids__ = 512
 
 
 class IODevice(object):

@@ -3,18 +3,43 @@
 import subprocess
 import re
 from tools import json
-from tools.configuration import ZPOOLS_IOSTAT_CACHE_FILE, ZPOOLS_COMMAND,\
+from tools.configuration import ZPOOLS_IOSTAT_CACHE_FILE, ZPOOLS_COMMAND, \
     ZPOOLS_IOSTAT_COMMAND_EXT
 from tools import ZPool, ZPoolDevice
 
-"""
-                              capacity     operations    bandwidth      latency
-pool                       alloc   free   read  write   read  write   read  write
--------------------------  -----  -----  -----  -----  -----  -----  -----  -----
-"""
+
+def create_zpool_device(zpool_serial):
+    temp_dev_obj = ZPoolDevice()
+    temp_dev_obj.from_values(label=zpool_serial[1],
+                             calloc=0,
+                             cfree=0,
+                             oread=zpool_serial[4],
+                             owrite=zpool_serial[5],
+                             bread=zpool_serial[6],
+                             bwrite=zpool_serial[7],
+                             lread=zpool_serial[8],
+                             lwrite=zpool_serial[9])
+    return temp_dev_obj
+
+
+def add_zpool_attributes(temp_zpool_obj, zpool_serial):
+    temp_zpool_obj.from_values(label=zpool_serial[0],
+                               calloc=zpool_serial[1],
+                               cfree=zpool_serial[2],
+                               oread=zpool_serial[3],
+                               owrite=zpool_serial[4],
+                               bread=zpool_serial[5],
+                               bwrite=zpool_serial[6],
+                               lread=zpool_serial[7],
+                               lwrite=zpool_serial[8])
+    return temp_zpool_obj
 
 
 def zpool_iostat():
+    """
+       capacity     operations    bandwidth      latency
+    alloc   free   read  write   read  write   read  write
+    """
     zpool_iostats = list()
     zpools_output = subprocess.Popen(ZPOOLS_COMMAND,
                                      shell=True,
@@ -28,55 +53,47 @@ def zpool_iostat():
                                   shell=True,
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT)
-        lines = output.stdout.readlines()
-        lines_iter = iter(lines)
-        for line in lines_iter:
-            zpool_serial = re.split('\s+', line)[1:-2]
-            if zpool == zpool_serial[0]:
-                # Adding attributes to Zpool Object if
-                # line contains zpool name
-                temp_zpool_obj.from_values(label=zpool_serial[0],
-                                           calloc=zpool_serial[1],
-                                           cfree=zpool_serial[2],
-                                           oread=zpool_serial[3],
-                                           owrite=zpool_serial[4],
-                                           bread=zpool_serial[5],
-                                           bwrite=zpool_serial[6],
-                                           lread=zpool_serial[7],
-                                           lwrite=zpool_serial[8])
-            elif not zpool_serial[0] and zpool_serial[1] not in ['mirror', 'raidz2']:
-                # Appending device if line is empty and does not contain
-                # vdevs (mirror, raidz2)
-                temp_dev_obj = ZPoolDevice()
-                temp_dev_obj.from_values(label=zpool_serial[1],
-                                         calloc=0, cfree=0,
-                                         oread=zpool_serial[4],
-                                         owrite=zpool_serial[5],
-                                         bread=zpool_serial[6],
-                                         bwrite=zpool_serial[7],
-                                         lread=zpool_serial[8],
-                                         lwrite=zpool_serial[9])
-                # appending device
-                temp_zpool_obj.devices.append(temp_dev_obj)
-            elif 'log' in zpool_serial or 'cache' in zpool_serial:
-                type_device = zpool_serial[0]
-
-                lines_iter.next()
-                zpool_serial = re.split('\s+', line)[1:-2]
-                temp_dev_obj = ZPoolDevice()
-                temp_dev_obj.from_values(label=zpool_serial[1],
-                                         calloc=0, cfree=0,
-                                         oread=zpool_serial[4],
-                                         owrite=zpool_serial[5],
-                                         bread=zpool_serial[6],
-                                         bwrite=zpool_serial[7],
-                                         lread=zpool_serial[8],
-                                         lwrite=zpool_serial[9])
-                if type_device == 'log':
-                    temp_zpool_obj.log.append(temp_dev_obj)
-                elif type_device == 'cache':
-                    temp_zpool_obj.cache.append(temp_dev_obj)
-
+        lines = output.stdout.readlines()[1:-1]
+        i = 0
+        # removing mirror, raid vDevices
+        for line in lines:
+            zpool_serial = re.split('\s+', line)[:-1]
+            if zpool_serial[1] in ['mirror', 'raidz2', 'raidz1']:
+                lines.pop(i)
+            i += 1
+        # parsing lines
+        for line in lines:
+            zpool_serial = re.split('\s+', line)[:-1]
+            if zpool_serial[0] == zpool:
+                add_zpool_attributes(temp_zpool_obj, zpool_serial)
+                for zpool_dev in lines:
+                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
+                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
+                    if not zpool_serial[0]:
+                        temp_dev_obj = create_zpool_device(zpool_serial)
+                        temp_zpool_obj.devices.append(temp_dev_obj)
+                    if zpool_serial_next[0] in ['cache', 'log']:
+                        break
+            elif zpool_serial[0] == 'cache':
+                for zpool_dev in lines:
+                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
+                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
+                    if not zpool_serial[0]:
+                        temp_dev_obj = create_zpool_device(zpool_serial)
+                        temp_zpool_obj.cache.append(temp_dev_obj)
+                    if zpool_serial_next[0] in ['cache', 'log']:
+                        break
+            elif zpool_serial[0] == 'log':
+                for zpool_dev in lines:
+                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
+                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
+                    if not zpool_serial[0]:
+                        temp_dev_obj = create_zpool_device(zpool_serial)
+                        temp_zpool_obj.log.append(temp_dev_obj)
+                    if zpool_serial_next[0] in ['cache', 'log']:
+                        break
+        # appending zpool object with devices
+        zpool_iostats.append(temp_zpool_obj)
     return [pool.to_json() for pool in zpool_iostats]
 
 
