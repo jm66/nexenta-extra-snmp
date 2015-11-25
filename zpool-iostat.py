@@ -45,7 +45,7 @@ def zpool_iostat():
                                      shell=True,
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
-    zpools = [pool for pool in zpools_output.stdout.readlines()]
+    zpools = [pool.replace('\n', '') for pool in zpools_output.stdout.readlines()]
 
     for zpool in zpools:
         temp_zpool_obj = ZPool()
