@@ -9,6 +9,9 @@ from tools import ZPool, ZPoolDevice
 
 
 def create_zpool_device(zpool_serial):
+    print zpool_serial
+    if len(zpool_serial) < 9:
+        return
     temp_dev_obj = ZPoolDevice()
     temp_dev_obj.from_values(label=zpool_serial[1],
                              calloc=0,
@@ -45,53 +48,51 @@ def zpool_iostat():
                                      shell=True,
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
+    # Parsing ZPools
     zpools = [pool.replace('\n', '') for pool in zpools_output.stdout.readlines()]
 
     for zpool in zpools:
-        temp_zpool_obj = ZPool()
         output = subprocess.Popen(ZPOOLS_IOSTAT_COMMAND_EXT % zpool,
                                   shell=True,
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT)
         lines = output.stdout.readlines()[1:-1]
-        i = 0
+        # list of list
+        lines_list = [re.split('\s+', line)[:-1] for line in lines]
         # removing mirror, raid vDevices
-        for line in lines:
-            zpool_serial = re.split('\s+', line)[:-1]
-            if zpool_serial[1] in ['mirror', 'raidz2', 'raidz1']:
-                lines.pop(i)
-            i += 1
-        # parsing lines
-        for line in lines:
-            zpool_serial = re.split('\s+', line)[:-1]
-            if zpool_serial[0] == zpool:
-                add_zpool_attributes(temp_zpool_obj, zpool_serial)
-                for zpool_dev in lines:
-                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
-                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
-                    if not zpool_serial[0]:
-                        temp_dev_obj = create_zpool_device(zpool_serial)
-                        temp_zpool_obj.devices.append(temp_dev_obj)
-                    if zpool_serial_next[0] in ['cache', 'log']:
-                        break
-            elif zpool_serial[0] == 'cache':
-                for zpool_dev in lines:
-                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
-                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
-                    if not zpool_serial[0]:
-                        temp_dev_obj = create_zpool_device(zpool_serial)
-                        temp_zpool_obj.cache.append(temp_dev_obj)
-                    if zpool_serial_next[0] in ['cache', 'log']:
-                        break
-            elif zpool_serial[0] == 'log':
-                for zpool_dev in lines:
-                    zpool_serial = re.split('\s+', zpool_dev)[:-1]
-                    zpool_serial_next = re.split('\s+', lines[lines.index(zpool_dev)+1])[:-1]
-                    if not zpool_serial[0]:
-                        temp_dev_obj = create_zpool_device(zpool_serial)
-                        temp_zpool_obj.log.append(temp_dev_obj)
-                    if zpool_serial_next[0] in ['cache', 'log']:
-                        break
+        for line in lines_list:
+            if line[1] in ['mirror', 'raid']:
+                lines_list.pop(lines_list.index(line))
+        #
+        temp_zpool_obj = ZPool()
+        n = 0
+        device, logs, cache = False, False, False
+        lines_iter = iter(lines_list)
+        for line in lines_iter:
+            print 'cache=%s, logs=%s, device=%s, n=%s' % (cache, logs, device, n)
+            if zpool == line[0]:
+                temp_zpool_obj = add_zpool_attributes(temp_zpool_obj, line)
+            elif logs:
+                temp_zpool_obj.log.append(create_zpool_device(line))
+            elif cache:
+                temp_zpool_obj.cache.append(create_zpool_device(line))
+            elif device:
+                temp_zpool_obj.devices.append(create_zpool_device(line))
+            # checking if next element is log or cache
+            tmp = n + 1
+            if tmp < len(lines_list):
+                print 'tmp=%s' % tmp
+                if lines_list[tmp][0] == 'logs' or logs:
+                    logs = True
+                    cache, device = False, False
+                elif lines_list[tmp][0] == 'cache' or cache:
+                    cache = True
+                    logs, device = False, False
+                else:
+                    device = True
+                    logs, cache = False, False
+            # increasing counter
+            n += 1
         # appending zpool object with devices
         zpool_iostats.append(temp_zpool_obj)
     return [pool.to_json() for pool in zpool_iostats]

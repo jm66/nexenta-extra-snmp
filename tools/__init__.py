@@ -80,7 +80,6 @@ class ZPoolDevice(object):
         self.lread = lread
         self.lwrite = lwrite
 
-
     def to_json(self):
         return {'label': self.label,
                 'capacity_alloc': self.calloc,
