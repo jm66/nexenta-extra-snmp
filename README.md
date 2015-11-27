@@ -50,7 +50,7 @@ Python scripts to extend SNMP agent with custom data.
 2. Add counterpart multi-threaded script using pass_persist protocol to SNMPD via NMC ```setup network service snmp-agent edit-settings```
 
 ```    
-    # IOstat SNMP script 
+    # Zpool IOstat SNMP script 
     pass_persist .1.3.6.1.4.1.6973.1.2 /opt/nexenta-extra-snmp/zpool-iostat-snmp.py
 ```
 
