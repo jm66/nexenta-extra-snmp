@@ -7,7 +7,7 @@ from tools.configuration import ZPOOLS_IOSTAT_CACHE_FILE, ZPOOLS_COMMAND, \
     ZPOOLS_IOSTAT_COMMAND_EXT
 from tools import ZPool, ZPoolDevice
 from tools.normalize import normalize_bytes, normalize_number, \
-    to_KiB, to_MiB, to_base_10
+    to_MiB, to_base_10
 
 
 def create_zpool_device(zpool_serial):

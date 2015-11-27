@@ -124,3 +124,17 @@ class ZPool(ZPoolDevice):
                 'cache': [dev.to_json() for dev in self.cache],
                 'log': [dev.to_json() for dev in self.log]
                 }
+
+    def from_json(self, zpool):
+        self.label = zpool['label']
+        self.calloc = zpool['capacity_alloc']
+        self.cfree = zpool['capacity_free']
+        self.oread = zpool['operations_read']
+        self.owrite = zpool['operations_write']
+        self.bread = zpool['bandwidth_read']
+        self.bwrite = zpool['bandwidth_write']
+        self.lread = zpool['latency_read']
+        self.lwrite = zpool['latency_write']
+        self.devices = [ZPoolDevice().from_json(device) for device in zpool['devices']]
+        self.cache = [ZPoolDevice().from_json(device) for device in zpool['cache']]
+        self.log = [ZPoolDevice().from_json(device) for device in zpool['log']]
