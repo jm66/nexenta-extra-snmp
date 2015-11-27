@@ -141,7 +141,7 @@ class ZPool(ZPoolDevice):
             tmp_obj.from_json(device)
             self.devices.append(tmp_obj)
         # Logs
-        for device in zpool['logs']:
+        for device in zpool['log']:
             tmp_obj = ZPoolDevice()
             tmp_obj.from_json(device)
             self.log.append(tmp_obj)
