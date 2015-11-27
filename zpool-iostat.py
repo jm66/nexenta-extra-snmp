@@ -9,19 +9,19 @@ from tools import ZPool, ZPoolDevice
 
 
 def create_zpool_device(zpool_serial):
-    print zpool_serial
-    if len(zpool_serial) < 9:
-        return
     temp_dev_obj = ZPoolDevice()
-    temp_dev_obj.from_values(label=zpool_serial[1],
-                             calloc=0,
-                             cfree=0,
-                             oread=zpool_serial[4],
-                             owrite=zpool_serial[5],
-                             bread=zpool_serial[6],
-                             bwrite=zpool_serial[7],
-                             lread=zpool_serial[8],
-                             lwrite=zpool_serial[9])
+    try:
+        temp_dev_obj.from_values(label=zpool_serial[1],
+                                 calloc=0,
+                                 cfree=0,
+                                 oread=zpool_serial[4],
+                                 owrite=zpool_serial[5],
+                                 bread=zpool_serial[6],
+                                 bwrite=zpool_serial[7],
+                                 lread=zpool_serial[8],
+                                 lwrite=zpool_serial[9])
+    except Exception:
+        print zpool_serial
     return temp_dev_obj
 
 
@@ -50,44 +50,52 @@ def zpool_iostat():
                                      stderr=subprocess.STDOUT)
     # Parsing ZPools
     zpools = [pool.replace('\n', '') for pool in zpools_output.stdout.readlines()]
-
+    # Processing pools
     for zpool in zpools:
         output = subprocess.Popen(ZPOOLS_IOSTAT_COMMAND_EXT % zpool,
                                   shell=True,
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT)
-        lines = output.stdout.readlines()[1:-1]
+        lines = output.stdout.readlines()[1:-2]
         # list of list
         lines_list = [re.split('\s+', line)[:-1] for line in lines]
         # removing mirror, raid vDevices
         for line in lines_list:
             if line[1] in ['mirror', 'raid']:
                 lines_list.pop(lines_list.index(line))
-        #
+        # processing lines
         temp_zpool_obj = ZPool()
         n = 0
         device, logs, cache = False, False, False
         lines_iter = iter(lines_list)
         for line in lines_iter:
-            print 'cache=%s, logs=%s, device=%s, n=%s' % (cache, logs, device, n)
             if zpool == line[0]:
                 temp_zpool_obj = add_zpool_attributes(temp_zpool_obj, line)
-            elif logs:
-                temp_zpool_obj.log.append(create_zpool_device(line))
             elif cache:
+                if 'cache' in line:
+                    line = lines_iter.next()
+                    n += 1
                 temp_zpool_obj.cache.append(create_zpool_device(line))
+            elif logs:
+                if 'logs' in line:
+                    line = lines_iter.next()
+                    n += 1
+                temp_zpool_obj.log.append(create_zpool_device(line))
             elif device:
                 temp_zpool_obj.devices.append(create_zpool_device(line))
             # checking if next element is log or cache
             tmp = n + 1
             if tmp < len(lines_list):
-                print 'tmp=%s' % tmp
-                if lines_list[tmp][0] == 'logs' or logs:
+                is_next_line_cache = lines_list[tmp][0] == 'cache'
+                is_next_line_logs = lines_list[tmp][0] == 'logs'
+                if is_next_line_logs or logs:
                     logs = True
-                    cache, device = False, False
-                elif lines_list[tmp][0] == 'cache' or cache:
+                    cache = is_next_line_cache
+                    device = False
+                elif is_next_line_cache or cache:
                     cache = True
-                    logs, device = False, False
+                    logs = is_next_line_logs
+                    device = False
                 else:
                     device = True
                     logs, cache = False, False
