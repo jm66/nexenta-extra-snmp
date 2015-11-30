@@ -19,10 +19,15 @@ class IODevice(object):
         self.KB_read_ps = None
         self.KB_written_ps = None
         self.wait = None
+        # average number of transactions actively being serviced
         self.actv = None
+        # average service time in wait queue, in milliseconds
         self.wsvc_t = None
+        # average service time of active transactions, in milliseconds
         self.asvc_t = None
+        # percent of time there are transactions waiting for service
         self.wait_pct = None
+        # percent of time the disk is busy (transactions in progress)
         self.busy_pct = None
 
     def __repr__(self):
