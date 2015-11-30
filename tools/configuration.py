@@ -1,6 +1,6 @@
 BASE_OID = '.1.3.6.1.4.1.6973'
 STORAGE_OID = BASE_OID + '.1'   # .1.3.6.1.4.1.6973.1
-POLLING_INTERVAL = 3
+POLLING_INTERVAL = 30
 MAX_RETRY = 10				    # Number of successive retries in case of error
 
 # IOStat
