@@ -34,30 +34,33 @@ def update_data():
             pp.add_int('.'.join(['2.3.10', oid]), len(zpool.devices))
             pp.add_int('.'.join(['2.3.11', oid]), len(zpool.log))
             pp.add_int('.'.join(['2.3.12', oid]), len(zpool.cache))
+            # ZPool Devices
             for device in zpool.devices:
                 d_oid = pp.encode(device.label)
                 pp.add_str('.'.join(['2.3.13.1', d_oid]), device.label)
-                pp.add_str('.'.join(['2.3.13.2', d_oid]), zpool)
+                pp.add_str('.'.join(['2.3.13.2', d_oid]), zpool.label)
                 pp.add_gau('.'.join(['2.3.13.3', d_oid]), device.oread)
                 pp.add_gau('.'.join(['2.3.13.4', d_oid]), device.owrite)
                 pp.add_gau('.'.join(['2.3.13.5', d_oid]), device.bread)
                 pp.add_gau('.'.join(['2.3.13.6', d_oid]), device.bwrite)
                 pp.add_gau('.'.join(['2.3.13.7', d_oid]), device.lread)
                 pp.add_gau('.'.join(['2.3.13.8', d_oid]), device.lwrite)
+            # ZPool Log Devices
             for l_device in zpool.log:
                 l_oid = pp.encode(l_device.label)
                 pp.add_str('.'.join(['2.3.14.1', l_oid]), l_device.label)
-                pp.add_str('.'.join(['2.3.14.2', l_oid]), zpool)
+                pp.add_str('.'.join(['2.3.14.2', l_oid]), zpool.label)
                 pp.add_gau('.'.join(['2.3.14.3', l_oid]), l_device.oread)
                 pp.add_gau('.'.join(['2.3.14.4', l_oid]), l_device.owrite)
                 pp.add_gau('.'.join(['2.3.14.5', l_oid]), l_device.bread)
                 pp.add_gau('.'.join(['2.3.14.6', l_oid]), l_device.bwrite)
                 pp.add_gau('.'.join(['2.3.14.7', l_oid]), l_device.lread)
                 pp.add_gau('.'.join(['2.3.14.8', l_oid]), l_device.lwrite)
+            # ZPool Cache Devices
             for c_device in zpool.cache:
                 c_oid = pp.encode(c_device.label)
                 pp.add_str('.'.join(['2.3.15.1', c_oid]), c_device.label)
-                pp.add_str('.'.join(['2.3.15.2', c_oid]), zpool)
+                pp.add_str('.'.join(['2.3.15.2', c_oid]), zpool.label)
                 pp.add_gau('.'.join(['2.3.15.3', c_oid]), c_device.oread)
                 pp.add_gau('.'.join(['2.3.15.4', c_oid]), c_device.owrite)
                 pp.add_gau('.'.join(['2.3.15.5', c_oid]), c_device.bread)
