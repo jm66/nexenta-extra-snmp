@@ -74,5 +74,26 @@
             <direction>output</direction>
             <oid>.1.3.6.1.4.1.6973.1.2.2.3.9</oid>
         </zpoolLatWrite>
+        <zpoolDevCount>
+            <name>Devices Count</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.10</oid>
+        </zpoolDevCount>
+        <zpoolLogDevCount>
+            <name>Log Devices Count</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.11</oid>
+        </zpoolLogDevCount>
+        <zpoolCacheDevCount>
+            <name>Cache Devices Count</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.12</oid>
+        </zpoolCacheDevCount>
     </fields>
 </query>
