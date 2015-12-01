@@ -47,6 +47,11 @@ class IODevice(object):
                 'busy_pct': self.busy_pct}
 
     def from_json(self, iodevice):
+        """
+        :type iodevice: dict
+        :param iodevice: IOdevice in its JSON representation
+        :return:
+        """
         self.device = iodevice['device']
         self.reads_ps = iodevice['reads_ps']
         self.writes_ps = iodevice['writes_ps']
@@ -97,6 +102,11 @@ class ZPoolDevice(object):
                 'latency_write': self.lwrite}
 
     def from_json(self, device):
+        """
+        :type device: dict
+        :param device: ZPoolDevice in json representation
+        :return:
+        """
         self.label = device['label']
         self.calloc = device['capacity_alloc']
         self.cfree = device['capacity_free']
@@ -131,6 +141,11 @@ class ZPool(ZPoolDevice):
                 }
 
     def from_json(self, zpool):
+        """
+        :type zpool: dict
+        :param zpool:  ZPool in JSON representation
+        :return:
+        """
         self.label = zpool['label']
         self.calloc = zpool['capacity_alloc']
         self.cfree = zpool['capacity_free']
