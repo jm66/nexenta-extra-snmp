@@ -37,7 +37,7 @@ def to_base_10(n):
     elif "T" in n[1]:
         return int(round(bitmath.TB(n[0]).to_Byte()))
     else:
-        return int(round(float(n)))
+        return int(round(float(n[0])))
 
 
 def to_MiB(n):
@@ -50,7 +50,7 @@ def to_MiB(n):
     elif "T" in n[1]:
         return int(round(bitmath.TiB(n[0]).to_MiB()))
     else:
-        return int(round(float(n)))
+        return int(round(float(n[0])))
 
 
 def to_KiB(n):
@@ -65,4 +65,4 @@ def to_KiB(n):
     elif "T" in n[1]:
         return int(round(bitmath.TiB(n[0]).to_KiB()))
     else:
-        return int(round(float(n)))
+        return int(round(float(n[0])))
