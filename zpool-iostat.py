@@ -16,12 +16,12 @@ def create_zpool_device(zpool_serial):
         temp_dev_obj.from_values(label=zpool_serial[1],
                                  calloc=0,
                                  cfree=0,
-                                 oread=to_base_10(normalize_number(zpool_serial[3])),
-                                 owrite=to_base_10(normalize_number(zpool_serial[4])),
-                                 bread=to_base_10(normalize_number(zpool_serial[5])),
-                                 bwrite=to_base_10(normalize_number(zpool_serial[6])),
-                                 lread=to_base_10(normalize_number(zpool_serial[7])),
-                                 lwrite=to_base_10(normalize_number(zpool_serial[8])))
+                                 oread=to_base_10(normalize_number(zpool_serial[4])),
+                                 owrite=to_base_10(normalize_number(zpool_serial[5])),
+                                 bread=to_base_10(normalize_number(zpool_serial[6])),
+                                 bwrite=to_base_10(normalize_number(zpool_serial[7])),
+                                 lread=to_base_10(normalize_number(zpool_serial[8])),
+                                 lwrite=to_base_10(normalize_number(zpool_serial[9])))
     except Exception:
         print zpool_serial
     return temp_dev_obj
