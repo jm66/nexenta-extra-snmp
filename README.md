@@ -55,3 +55,6 @@ Python scripts to extend SNMP agent with custom data.
 ```
 
 ## Resources
+
+* [Extend SNMP MIB with ZFS performance Counters](https://wiki.eis.utoronto.ca/display/VSS/Extend+SNMP+OID+with+ZFS+counters+on+Nexenta)
+* [Monitor Nexenta with SNMP nad Cacti](https://wiki.eis.utoronto.ca/pages/viewpage.action?pageId=5406770)
