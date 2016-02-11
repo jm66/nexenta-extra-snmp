@@ -1,0 +1,71 @@
+<query>
+    <name>Nexenta (Extended) - Zpool IOstat Log Devices</name>
+    <description>NexentaStor (Extended) ZPool IOstat Log Devices</description>
+    <oid_index>.1.3.6.1.4.1.6973.1.2.2.3.14.1</oid_index>
+    <index_order>rsIndex</index_order>
+    <oid_index_parse>OID/REGEXP:^.*\.6973\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.(.*)$</oid_index_parse>
+    <index_order_type>alphabetic</index_order_type>
+    <fields>
+        <rsIndex>
+            <name>rsIndex</name>
+            <source>index</source>
+            <direction>input</direction>
+        </rsIndex>
+        <deviceLabel>
+            <name>Device Label</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>input</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.1</oid>
+        </deviceLabel>
+        <deviceZPoolLabel>
+            <name>ZPool Label</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>input</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.2</oid>
+        </deviceZPoolLabel>
+        <zpoolOpsRead>
+            <name>Operations Read</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.3</oid>
+        </zpoolOpsRead>
+        <zpoolOpsWrite>
+            <name>Operations Write</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.4</oid>
+        </zpoolOpsWrite>
+        <zpoolBandRead>
+            <name>Bandwidth Read Ps</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.5</oid>
+        </zpoolBandRead>
+        <zpoolBandWrite>
+            <name>Bandwidth Write Ps</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.6</oid>
+        </zpoolBandWrite>
+        <zpoolLatRead>
+            <name>Latency Read</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.7</oid>
+        </zpoolLatRead>
+        <zpoolLatWrite>
+            <name>Latency Write</name>
+            <method>walk</method>
+            <source>value</source>
+            <direction>output</direction>
+            <oid>.1.3.6.1.4.1.6973.1.2.2.3.14.8</oid>
+        </zpoolLatWrite>
+    </fields>
+</query>
