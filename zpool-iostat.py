@@ -13,30 +13,30 @@ from tools.normalize import normalize_bytes, normalize_number, \
 def create_zpool_device(zpool_serial):
     temp_dev_obj = ZPoolDevice()
     try:
-        temp_dev_obj.from_values(label=zpool_serial[1],
-                                 calloc=0,
-                                 cfree=0,
-                                 oread=to_base_10(normalize_number(zpool_serial[4])),
-                                 owrite=to_base_10(normalize_number(zpool_serial[5])),
-                                 bread=to_base_10(normalize_number(zpool_serial[6])),
-                                 bwrite=to_base_10(normalize_number(zpool_serial[7])),
-                                 lread=to_base_10(normalize_number(zpool_serial[8])),
-                                 lwrite=to_base_10(normalize_number(zpool_serial[9])))
+        temp_dev_obj.from_values(
+            label=zpool_serial[1], calloc=0, cfree=0,
+            oread=to_base_10(normalize_number(zpool_serial[4])),
+            owrite=to_base_10(normalize_number(zpool_serial[5])),
+            bread=to_base_10(normalize_number(zpool_serial[6])),
+            bwrite=to_base_10(normalize_number(zpool_serial[7])),
+            lread=to_base_10(normalize_number(zpool_serial[8])),
+            lwrite=to_base_10(normalize_number(zpool_serial[9])))
     except Exception:
         print zpool_serial
     return temp_dev_obj
 
 
 def add_zpool_attributes(temp_zpool_obj, zpool_serial):
-    temp_zpool_obj.from_values(label=zpool_serial[0],
-                               calloc=to_MiB(normalize_bytes(zpool_serial[1])),
-                               cfree=to_MiB(normalize_bytes(zpool_serial[2])),
-                               oread=to_base_10(normalize_number(zpool_serial[3])),
-                               owrite=to_base_10(normalize_number(zpool_serial[4])),
-                               bread=to_base_10(normalize_number(zpool_serial[5])),
-                               bwrite=to_base_10(normalize_number(zpool_serial[6])),
-                               lread=to_base_10(normalize_number(zpool_serial[7])),
-                               lwrite=to_base_10(normalize_number(zpool_serial[8])))
+    temp_zpool_obj.from_values(
+        label=zpool_serial[0],
+        calloc=to_MiB(normalize_bytes(zpool_serial[1])),
+        cfree=to_MiB(normalize_bytes(zpool_serial[2])),
+        oread=to_base_10(normalize_number(zpool_serial[3])),
+        owrite=to_base_10(normalize_number(zpool_serial[4])),
+        bread=to_base_10(normalize_number(zpool_serial[5])),
+        bwrite=to_base_10(normalize_number(zpool_serial[6])),
+        lread=to_base_10(normalize_number(zpool_serial[7])),
+        lwrite=to_base_10(normalize_number(zpool_serial[8])))
     return temp_zpool_obj
 
 
@@ -51,7 +51,8 @@ def zpool_iostat():
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
     # Parsing ZPools
-    zpools = [pool.replace('\n', '') for pool in zpools_output.stdout.readlines()]
+    zpools = [pool.replace('\n', '')
+              for pool in zpools_output.stdout.readlines()]
     # Processing pools
     for zpool in zpools:
         output = subprocess.Popen(ZPOOLS_IOSTAT_COMMAND_EXT % zpool,
