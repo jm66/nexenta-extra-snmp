@@ -37,7 +37,10 @@ def main():
     retry_counter = MAX_RETRY
     while retry_counter > 0:
         try:
-            syslog.syslog(syslog.LOG_INFO, "Starting IOstat monitoring... with base OID %s" % BASE_OID)
+            syslog.syslog(
+                syslog.LOG_INFO,
+                "Starting IOstat monitoring... "
+                "with base OID {}".format(BASE_OID))
             pp = snmp.PassPersist(BASE_OID)
             pp.start(update_data, POLLING_INTERVAL)
         except KeyboardInterrupt:
@@ -46,20 +49,30 @@ def main():
             sys.exit(0)
         except IOError, e:
             if e.errno == errno.EPIPE:
-                syslog.syslog(syslog.LOG_INFO, "SNMPD has closed the pipe, exiting...")
+                syslog.syslog(
+                    syslog.LOG_INFO,
+                    "SNMPD has closed the pipe, exiting...")
                 sys.exit(0)
             else:
-                syslog.syslog(syslog.LOG_WARNING, "Updater thread died: IOError: %s" % e)
+                syslog.syslog(
+                    syslog.LOG_WARNING,
+                    "Updater thread died: IOError: {}".format(e))
         except Exception, e:
-            syslog.syslog(syslog.LOG_WARNING, "Main thread died: %s: %s" % (e.__class__.__name__, e))
+            syslog.syslog(
+                syslog.LOG_WARNING,
+                "Main thread died: {0}: {1}".format(e.__class__.__name__,
+                                                    e))
 
         syslog.syslog(syslog.LOG_WARNING, "Restarting monitoring in 15 sec...")
         # Errors frequency detection
         now = int(time.time())
-        if (now - 3600) > retry_timestamp: 	# If the previous error is older than 1H
-            retry_counter = MAX_RETRY       # Reset the counter
+        # If the previous error is older than 1H
+        if (now - 3600) > retry_timestamp:
+            # Reset the counter
+            retry_counter = MAX_RETRY
         else:
-            retry_counter -= 1 				# Else countdown
+            # Else countdown
+            retry_counter -= 1
 
         retry_timestamp = now
     syslog.syslog(syslog.LOG_ERR, "Too many retries, aborting...")
